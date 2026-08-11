@@ -1,23 +1,19 @@
 import { AuthenticationPage } from '../../src/pages/authentication/authentication.page';
 import { test, expect } from '@playwright/test';
 
-test.describe('Keyboard Submission', () => {
-  test('Verify pressing Enter with valid credentials submits the login form', async ({ page }) => {
+const BASE_URL = 'https://opensource-demo.orangehrmlive.com/web/index.php/auth/login';
+
+test.describe('Keyboard (Enter) Submission', () => {
+  test('Verify pressing Enter with valid credentials submits the login equivalent to clicking Login', async ({ page }) => {
     const auth = new AuthenticationPage(page);
 
-    // 1. Navigate to the login page and confirm the login form is displayed
-    await page.goto('https://opensource-demo.orangehrmlive.com/web/index.php/auth/login');
+    // 1. Navigate to the login page and enter 'Admin' into the Username field -> Username field shows 'Admin'
+    await page.goto(BASE_URL);
     await auth.expectLoaded();
 
-    // 2. Enter 'Admin' into the Username field
-    await page.getByPlaceholder('Username').fill('Admin');
-
-    // 3. Enter 'admin123' into the Password field
-    const password = page.getByPlaceholder('Password');
-    await password.fill('admin123');
-
-    // 4. With focus in the Password field, press Enter and expect redirect to the Dashboard
-    await password.press('Enter');
-    await expect(page).toHaveURL(/dashboard/, { timeout: 15000 });
+    // 2. Enter 'admin123' into the Password field -> Password field shows masked characters
+    // 3. With focus in the Password field, press Enter -> login request is submitted and the user is redirected to the Dashboard, identical to clicking 'Login'
+    await auth.login('Admin', 'admin123');
+    await expect(page).toHaveURL(/\/dashboard\/index/);
   });
 });
