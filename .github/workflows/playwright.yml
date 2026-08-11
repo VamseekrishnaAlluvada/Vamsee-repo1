@@ -34,8 +34,6 @@ jobs:
         run: npx playwright test
         env:
           # Provide these under Settings → Secrets and variables → Actions.
-          # BASE_URL is required; the app credentials are only needed if your
-          # tests log in. CI=true enables retries and forbids test.only.
           BASE_URL: ${{ secrets.BASE_URL }}
           APP_USERNAME: ${{ secrets.APP_USERNAME }}
           APP_PASSWORD: ${{ secrets.APP_PASSWORD }}
