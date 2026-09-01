@@ -1,0 +1,40 @@
+{
+  "$schema": "./topology.schema (informal)",
+  "generatedBy": "planner-agent",
+  "spec": "spec/openapi.json",
+  "service": "restful-booker",
+  "description": "Directed Acyclic Graph of endpoint execution order and data dependencies. Edges point from prerequisite -> dependent.",
+  "securitySchemes": {
+    "cookieToken": { "type": "apiKey", "in": "cookie", "name": "token", "obtainedFrom": "POST /auth" },
+    "basicAuth": { "type": "http", "scheme": "basic" }
+  },
+  "nodes": [
+    { "id": "ping", "operationId": "healthCheck", "method": "GET", "path": "/ping", "auth": "none", "role": "precondition" },
+    { "id": "auth", "operationId": "createToken", "method": "POST", "path": "/auth", "auth": "none", "role": "auth", "produces": ["token"] },
+    { "id": "createBooking", "operationId": "createBooking", "method": "POST", "path": "/booking", "auth": "none", "role": "create", "produces": ["bookingid"] },
+    { "id": "getBooking", "operationId": "getBooking", "method": "GET", "path": "/booking/{id}", "auth": "none", "role": "read", "consumes": ["bookingid"] },
+    { "id": "listBookings", "operationId": "getBookingIds", "method": "GET", "path": "/booking", "auth": "none", "role": "read" },
+    { "id": "updateBooking", "operationId": "updateBooking", "method": "PUT", "path": "/booking/{id}", "auth": "cookieToken|basicAuth", "role": "update", "consumes": ["bookingid", "token"] },
+    { "id": "patchBooking", "operationId": "partialUpdateBooking", "method": "PATCH", "path": "/booking/{id}", "auth": "cookieToken|basicAuth", "role": "update", "consumes": ["bookingid", "token"] },
+    { "id": "deleteBooking", "operationId": "deleteBooking", "method": "DELETE", "path": "/booking/{id}", "auth": "cookieToken|basicAuth", "role": "delete", "consumes": ["bookingid", "token"] }
+  ],
+  "edges": [
+    { "from": "ping", "to": "auth", "reason": "service must be up before authenticating" },
+    { "from": "auth", "to": "updateBooking", "reason": "token required for PUT" },
+    { "from": "auth", "to": "patchBooking", "reason": "token required for PATCH" },
+    { "from": "auth", "to": "deleteBooking", "reason": "token required for DELETE" },
+    { "from": "createBooking", "to": "getBooking", "reason": "need a bookingid to read" },
+    { "from": "createBooking", "to": "updateBooking", "reason": "need a bookingid to replace" },
+    { "from": "createBooking", "to": "patchBooking", "reason": "need a bookingid to patch" },
+    { "from": "createBooking", "to": "deleteBooking", "reason": "need a bookingid to delete" },
+    { "from": "createBooking", "to": "listBookings", "reason": "created record should appear in filtered list" }
+  ],
+  "criticalPath": ["ping", "auth", "createBooking", "getBooking", "updateBooking", "patchBooking", "deleteBooking"],
+  "cleanupStrategy": {
+    "order": "reverse-of-creation (LIFO)",
+    "operation": "DELETE /booking/{id}",
+    "auth": "cookieToken",
+    "note": "restful-booker returns 201 on successful delete"
+  },
+  "acyclic": true
+}

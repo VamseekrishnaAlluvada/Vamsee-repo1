@@ -1,0 +1,92 @@
+{
+  "generatedBy": "planner-agent",
+  "service": "restful-booker",
+  "spec": "spec/openapi.json",
+  "environments": ["dev", "staging", "prod"],
+  "requiredSecrets": ["BOOKER_USERNAME", "BOOKER_PASSWORD"],
+  "globalMandates": {
+    "schemaValidationOn2xx": true,
+    "authRefreshRetryOn401or403": 1,
+    "throttleMinIntervalMsEnv": "REQUEST_MIN_INTERVAL_MS",
+    "parallelShards": 8,
+    "dataSource": "@faker-js/faker (no hardcoded data)",
+    "isolation": "each test creates and cleans up its own resources"
+  },
+  "suites": [
+    {
+      "id": "auth",
+      "file": "tests/api/auth/auth.spec.ts",
+      "priority": "P0",
+      "categories": ["positive", "negative", "contract"],
+      "requiredFixtures": ["apiClient"],
+      "cases": [
+        { "name": "obtains a token with valid credentials", "category": "positive", "schema": "AuthResponse" },
+        { "name": "returns bad-credentials reason with invalid password", "category": "negative" },
+        { "name": "ping health check returns 201", "category": "positive" }
+      ]
+    },
+    {
+      "id": "booking-crud",
+      "file": "tests/api/booking/booking.crud.spec.ts",
+      "priority": "P0",
+      "categories": ["positive", "contract"],
+      "requiredFixtures": ["apiClient", "testDataContext"],
+      "dependsOn": ["auth"],
+      "dagPath": ["createBooking", "getBooking", "updateBooking", "patchBooking", "deleteBooking"],
+      "cases": [
+        { "name": "full lifecycle create -> read -> update -> patch -> delete", "category": "positive", "schema": ["CreateBookingResponse", "Booking"] }
+      ]
+    },
+    {
+      "id": "booking-negative",
+      "file": "tests/api/booking/booking.negative.spec.ts",
+      "priority": "P1",
+      "categories": ["negative"],
+      "requiredFixtures": ["apiClient", "testDataContext"],
+      "cases": [
+        { "name": "GET non-existent booking returns 404", "category": "negative" },
+        { "name": "PUT without auth returns 403", "category": "negative" },
+        { "name": "DELETE without auth returns 403", "category": "negative" },
+        { "name": "POST malformed payload returns 500", "category": "negative" }
+      ]
+    },
+    {
+      "id": "booking-boundary",
+      "file": "tests/api/booking/booking.boundary.spec.ts",
+      "priority": "P2",
+      "categories": ["boundary"],
+      "requiredFixtures": ["apiClient", "testDataContext"],
+      "cases": [
+        { "name": "totalprice at zero boundary is accepted", "category": "boundary" },
+        { "name": "very large totalprice is accepted", "category": "boundary" },
+        { "name": "booking without optional additionalneeds is accepted", "category": "boundary" }
+      ]
+    },
+    {
+      "id": "booking-contract",
+      "file": "tests/api/booking/booking.contract.spec.ts",
+      "priority": "P1",
+      "categories": ["contract"],
+      "requiredFixtures": ["apiClient", "testDataContext"],
+      "cases": [
+        { "name": "GET /booking list conforms to BookingIdList schema", "category": "contract", "schema": "BookingIdList" },
+        { "name": "created booking round-trips and conforms to Booking schema", "category": "contract", "schema": "Booking" }
+      ]
+    },
+    {
+      "id": "booking-datadriven",
+      "file": "tests/api/booking/booking.datadriven.spec.ts",
+      "priority": "P2",
+      "categories": ["data-driven"],
+      "requiredFixtures": ["apiClient", "testDataContext"],
+      "cases": [
+        { "name": "creates and verifies bookings across a faker-generated data matrix", "category": "data-driven", "iterations": 5 }
+      ]
+    }
+  ],
+  "seeding": {
+    "strategy": "on-demand per test via faker factory (data/booking.factory.ts)",
+    "sharedSeedApis": ["POST /booking"],
+    "note": "No global seed step; isolation is preferred over shared seed data to keep shards independent."
+  }
+}

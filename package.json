@@ -1,0 +1,37 @@
+{
+  "name": "api-automation-framework",
+  "version": "1.0.0",
+  "description": "Zero-flake, self-healing Playwright API automation framework (Planner + Generator + Healer) targeting restful-booker",
+  "private": true,
+  "scripts": {
+    "test": "playwright test",
+    "test:parallel": "playwright test --workers=8",
+    "test:shard": "playwright test --shard=${SHARD:-1}/8",
+    "test:ci": "playwright test --reporter=list,json,allure-playwright",
+    "pipeline": "ts-node scripts/run-pipeline.ts",
+    "heal": "ts-node healer/healer.ts",
+    "allure:generate": "allure generate allure-results --clean -o allure-report",
+    "allure:open": "allure open allure-report",
+    "typecheck": "tsc --noEmit",
+    "plan": "ts-node scripts/print-plan.ts"
+  },
+  "keywords": ["playwright", "api", "automation", "self-healing", "typescript"],
+  "license": "MIT",
+  "devDependencies": {
+    "@faker-js/faker": "^9.3.0",
+    "@playwright/test": "^1.49.1",
+    "@types/node": "^22.10.2",
+    "allure-commandline": "^2.32.0",
+    "allure-playwright": "^3.0.9",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.7.2"
+  },
+  "dependencies": {
+    "ajv": "^8.17.1",
+    "ajv-formats": "^3.0.1",
+    "winston": "^3.17.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

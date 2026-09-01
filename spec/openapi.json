@@ -1,0 +1,262 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "restful-booker",
+    "version": "1.0.0",
+    "description": "OpenAPI 3.0 description of the restful-booker API (https://restful-booker.herokuapp.com). Normalized by the Planner agent from the published API docs and verified against the live service."
+  },
+  "servers": [{ "url": "https://restful-booker.herokuapp.com" }],
+  "tags": [
+    { "name": "auth", "description": "Authentication" },
+    { "name": "booking", "description": "Booking resource CRUD" },
+    { "name": "ops", "description": "Operational / health" }
+  ],
+  "paths": {
+    "/ping": {
+      "get": {
+        "tags": ["ops"],
+        "operationId": "healthCheck",
+        "summary": "Health check",
+        "responses": {
+          "201": { "description": "Service is up" }
+        }
+      }
+    },
+    "/auth": {
+      "post": {
+        "tags": ["auth"],
+        "operationId": "createToken",
+        "summary": "Create an auth token",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/AuthRequest" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Token created OR bad-credentials reason (restful-booker returns 200 in both cases)",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/AuthResponse" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/booking": {
+      "get": {
+        "tags": ["booking"],
+        "operationId": "getBookingIds",
+        "summary": "List booking ids (optionally filtered)",
+        "parameters": [
+          { "name": "firstname", "in": "query", "schema": { "type": "string" } },
+          { "name": "lastname", "in": "query", "schema": { "type": "string" } },
+          { "name": "checkin", "in": "query", "schema": { "type": "string", "format": "date" } },
+          { "name": "checkout", "in": "query", "schema": { "type": "string", "format": "date" } }
+        ],
+        "responses": {
+          "200": {
+            "description": "Array of booking id references",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/BookingIdList" }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": ["booking"],
+        "operationId": "createBooking",
+        "summary": "Create a booking",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/Booking" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Booking created",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/CreateBookingResponse" }
+              }
+            }
+          },
+          "500": { "description": "Invalid payload (restful-booker returns 500 on malformed body)" }
+        }
+      }
+    },
+    "/booking/{id}": {
+      "parameters": [
+        { "name": "id", "in": "path", "required": true, "schema": { "type": "integer" } }
+      ],
+      "get": {
+        "tags": ["booking"],
+        "operationId": "getBooking",
+        "summary": "Get a booking by id",
+        "responses": {
+          "200": {
+            "description": "The booking",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Booking" }
+              }
+            }
+          },
+          "404": { "description": "Booking not found" }
+        }
+      },
+      "put": {
+        "tags": ["booking"],
+        "operationId": "updateBooking",
+        "summary": "Replace a booking (auth required)",
+        "security": [{ "cookieToken": [] }, { "basicAuth": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/Booking" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Updated booking",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Booking" }
+              }
+            }
+          },
+          "403": { "description": "Missing/invalid auth" },
+          "405": { "description": "Method not allowed / not found" }
+        }
+      },
+      "patch": {
+        "tags": ["booking"],
+        "operationId": "partialUpdateBooking",
+        "summary": "Partially update a booking (auth required)",
+        "security": [{ "cookieToken": [] }, { "basicAuth": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/BookingPatch" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Updated booking",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Booking" }
+              }
+            }
+          },
+          "403": { "description": "Missing/invalid auth" }
+        }
+      },
+      "delete": {
+        "tags": ["booking"],
+        "operationId": "deleteBooking",
+        "summary": "Delete a booking (auth required)",
+        "security": [{ "cookieToken": [] }, { "basicAuth": [] }],
+        "responses": {
+          "201": { "description": "Deleted (restful-booker returns 201 Created on delete)" },
+          "403": { "description": "Missing/invalid auth" },
+          "405": { "description": "Already deleted / not found" }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "cookieToken": { "type": "apiKey", "in": "cookie", "name": "token" },
+      "basicAuth": { "type": "http", "scheme": "basic" }
+    },
+    "schemas": {
+      "AuthRequest": {
+        "type": "object",
+        "required": ["username", "password"],
+        "additionalProperties": false,
+        "properties": {
+          "username": { "type": "string" },
+          "password": { "type": "string" }
+        }
+      },
+      "AuthResponse": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "token": { "type": "string" },
+          "reason": { "type": "string" }
+        }
+      },
+      "BookingDates": {
+        "type": "object",
+        "required": ["checkin", "checkout"],
+        "additionalProperties": false,
+        "properties": {
+          "checkin": { "type": "string", "format": "date" },
+          "checkout": { "type": "string", "format": "date" }
+        }
+      },
+      "Booking": {
+        "type": "object",
+        "required": ["firstname", "lastname", "totalprice", "depositpaid", "bookingdates"],
+        "additionalProperties": false,
+        "properties": {
+          "firstname": { "type": "string", "minLength": 1 },
+          "lastname": { "type": "string", "minLength": 1 },
+          "totalprice": { "type": "integer" },
+          "depositpaid": { "type": "boolean" },
+          "bookingdates": { "$ref": "#/components/schemas/BookingDates" },
+          "additionalneeds": { "type": "string" }
+        }
+      },
+      "BookingPatch": {
+        "type": "object",
+        "additionalProperties": false,
+        "minProperties": 1,
+        "properties": {
+          "firstname": { "type": "string", "minLength": 1 },
+          "lastname": { "type": "string", "minLength": 1 },
+          "totalprice": { "type": "integer" },
+          "depositpaid": { "type": "boolean" },
+          "bookingdates": { "$ref": "#/components/schemas/BookingDates" },
+          "additionalneeds": { "type": "string" }
+        }
+      },
+      "CreateBookingResponse": {
+        "type": "object",
+        "required": ["bookingid", "booking"],
+        "additionalProperties": false,
+        "properties": {
+          "bookingid": { "type": "integer" },
+          "booking": { "$ref": "#/components/schemas/Booking" }
+        }
+      },
+      "BookingIdRef": {
+        "type": "object",
+        "required": ["bookingid"],
+        "additionalProperties": false,
+        "properties": {
+          "bookingid": { "type": "integer" }
+        }
+      },
+      "BookingIdList": {
+        "type": "array",
+        "items": { "$ref": "#/components/schemas/BookingIdRef" }
+      }
+    }
+  }
+}
