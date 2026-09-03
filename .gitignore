@@ -1,7 +1,12 @@
 node_modules
-reports
 test-results
-playwright-report
 .env
-*.log
 .DS_Store
+
+# Keep the output folders in the repo, ignore their runtime contents.
+report/*
+!report/.gitkeep
+traces/*
+!traces/.gitkeep
+logs/*
+!logs/.gitkeep
