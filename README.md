@@ -26,10 +26,13 @@ default, runs in parallel, and saves a video + trace for every test.
 
     playwright.config.ts   Playwright config (testDir ./tests, chromium, parallel)
     package.json  tsconfig.json  .env.example
-    pages/                 page objects
+    pages/                 page objects (UI tests)
       base.page.ts         BasePage that every page object extends
       <module>/            e.g. auth/login.page.ts
       components/          shared components
+    api/                   service objects (API tests)
+      base.api.ts          BaseApi that every service object extends
+      <module>/            e.g. users/users.api.ts
     common/                env, db (Azure SQL), test-data loader, fixtures, matchers, logger
     data/testdata/         JSON test data (non-sensitive)
     specs/                 Markdown test plan (basic-operations.md)
@@ -41,6 +44,11 @@ default, runs in parallel, and saves a video + trace for every test.
 
 Specs talk to page objects, never to raw selectors. When the UI changes, fix the
 page object under pages/, not the tests.
+
+API specs follow the same pattern with service objects: they call methods on a
+class under api/ and assert on the response, never building a URL or setting a
+header themselves. When an endpoint moves or its auth changes, fix the service
+object under api/, not the tests.
 
 ## Configuration
 
