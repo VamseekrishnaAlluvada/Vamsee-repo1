@@ -28,4 +28,11 @@ export class QapassBasicAuthApi extends BaseApi {
       headers: {"Accept":"application/json"},
     });
   }
+
+  /** GET https://httpbin.org/basic-auth/qauser/qapass?foo=bar */
+  async confirmGETBasicAuthQauserQapassIgnoresAn(): Promise<APIResponse> {
+    return this.send("GET", "https://httpbin.org/basic-auth/qauser/qapass?foo=bar", {
+      headers: {"Accept":"application/json"},
+    });
+  }
 }
