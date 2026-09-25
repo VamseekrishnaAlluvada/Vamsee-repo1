@@ -23,15 +23,8 @@ export class PingApi extends BaseApi {
   }
 
   /** POST https://restful-booker.herokuapp.com/ping */
-  async rejectPOSTPingAgainstTheReadOnlyHealthCheck(): Promise<APIResponse> {
+  async rejectPOSTPingWithA4xx405BecauseTheHealth(): Promise<APIResponse> {
     return this.send("POST", "https://restful-booker.herokuapp.com/ping", {
-      headers: {"Accept":"*/*"},
-    });
-  }
-
-  /** GET https://restful-booker.herokuapp.com/ping/99999999 */
-  async return404ForGETPing99999999WhenAnUnknownSub(): Promise<APIResponse> {
-    return this.send("GET", "https://restful-booker.herokuapp.com/ping/99999999", {
       headers: {"Accept":"*/*"},
     });
   }
