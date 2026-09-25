@@ -9,42 +9,34 @@ import { BaseApi, fill, fillHeaders, type Vars } from '../base.api';
  */
 export class BookingApi extends BaseApi {
   /** POST https://restful-booker.herokuapp.com/booking */
-  async verifyPOSTBookingCreatesABookingAndReturns(vars: Vars = {}): Promise<APIResponse> {
+  async verifyPOSTBookingReturns200AndAJSONBodyWhenA(vars: Vars = {}): Promise<APIResponse> {
     return this.send("POST", fill("https://restful-booker.herokuapp.com/booking", vars), {
       headers: fillHeaders({"Content-Type":"application/json","Accept":"application/json"}, vars),
-      data: fill("{\"firstname\":\"{{firstname}}\",\"lastname\":\"Tester\",\"totalprice\":{{totalprice}},\"depositpaid\":true,\"bookingdates\":{\"checkin\":\"2026-10-01\",\"checkout\":\"2026-10-05\"},\"additionalneeds\":\"Breakfast\"}", vars),
+      data: fill("{\"firstname\": \"{{firstname}}\", \"lastname\": \"Tester\", \"totalprice\": {{totalprice}}, \"depositpaid\": true, \"bookingdates\": {\"checkin\": \"2026-10-01\", \"checkout\": \"2026-10-05\"}, \"additionalneeds\": \"Breakfast\"}", vars),
     });
   }
 
   /** POST https://restful-booker.herokuapp.com/booking */
-  async rejectPOSTBookingWithANon2xxStatusWhenThe(vars: Vars = {}): Promise<APIResponse> {
-    return this.send("POST", fill("https://restful-booker.herokuapp.com/booking", vars), {
-      headers: fillHeaders({"Content-Type":"application/json","Accept":"application/json"}, vars),
-      data: fill("{\"lastname\":\"Tester\",\"totalprice\":{{totalprice}},\"depositpaid\":true,\"bookingdates\":{\"checkin\":\"2026-10-01\",\"checkout\":\"2026-10-05\"},\"additionalneeds\":\"Breakfast\"}", vars),
-    });
-  }
-
-  /** POST https://restful-booker.herokuapp.com/booking */
-  async rejectPOSTBookingWithANon2xxStatusWhenThe2(vars: Vars = {}): Promise<APIResponse> {
-    return this.send("POST", fill("https://restful-booker.herokuapp.com/booking", vars), {
-      headers: fillHeaders({"Content-Type":"application/json","Accept":"application/json"}, vars),
-      data: fill("{\"firstname\":\"{{firstname}}\",\"lastname\":\"Tester\",\"totalprice\":,}", vars),
-    });
-  }
-
-  /** POST https://restful-booker.herokuapp.com/booking */
-  async rejectPOSTBookingWithANon2xxStatusWhen(vars: Vars = {}): Promise<APIResponse> {
-    return this.send("POST", fill("https://restful-booker.herokuapp.com/booking", vars), {
-      headers: fillHeaders({"Content-Type":"application/json","Accept":"application/json"}, vars),
-      data: fill("{\"firstname\":\"{{firstname}}\",\"lastname\":\"Tester\",\"totalprice\":\"not-a-number\",\"depositpaid\":true,\"bookingdates\":{\"checkin\":\"2026-10-01\",\"checkout\":\"2026-10-05\"},\"additionalneeds\":\"Breakfast\"}", vars),
-    });
-  }
-
-  /** POST https://restful-booker.herokuapp.com/booking */
-  async rejectPOSTBookingWithANon2xxStatusWhenAn(): Promise<APIResponse> {
+  async rejectPOSTBookingWithANon2xxStatusWhenThe(): Promise<APIResponse> {
     return this.send("POST", "https://restful-booker.herokuapp.com/booking", {
       headers: {"Content-Type":"application/json","Accept":"application/json"},
-      data: "{}",
+      data: "{\"lastname\": \"Tester\", \"totalprice\": 150, \"depositpaid\": true, \"bookingdates\": {\"checkin\": \"2026-10-01\", \"checkout\": \"2026-10-05\"}, \"additionalneeds\": \"Breakfast\"}",
+    });
+  }
+
+  /** POST https://restful-booker.herokuapp.com/booking */
+  async rejectPOSTBookingWithA4xx5xxStatusWhenThe(): Promise<APIResponse> {
+    return this.send("POST", "https://restful-booker.herokuapp.com/booking", {
+      headers: {"Content-Type":"application/json","Accept":"application/json"},
+      data: "{\"firstname\": \"Jim\", \"lastname\": \"Tester\", \"totalprice\": 150,",
+    });
+  }
+
+  /** POST https://restful-booker.herokuapp.com/booking */
+  async rejectPOSTBookingWithANon2xxStatusWhen(): Promise<APIResponse> {
+    return this.send("POST", "https://restful-booker.herokuapp.com/booking", {
+      headers: {"Content-Type":"application/json","Accept":"application/json"},
+      data: "{\"firstname\": \"Jim\", \"lastname\": \"Tester\", \"totalprice\": \"not-a-number\", \"depositpaid\": true, \"bookingdates\": {\"checkin\": \"2026-10-01\", \"checkout\": \"2026-10-05\"}, \"additionalneeds\": \"Breakfast\"}",
     });
   }
 
@@ -55,23 +47,23 @@ export class BookingApi extends BaseApi {
     });
   }
 
-  /** GET https://restful-booker.herokuapp.com/booking/99999999 */
-  async return404ForGETBooking99999999WhenTheBooking(): Promise<APIResponse> {
-    return this.send("GET", "https://restful-booker.herokuapp.com/booking/99999999", {
+  /** GET https://restful-booker.herokuapp.com/booking/?firstname=Sally */
+  async verifyGETBookingWithAFirstnameFilterReturns(): Promise<APIResponse> {
+    return this.send("GET", "https://restful-booker.herokuapp.com/booking/?firstname=Sally", {
       headers: {"Accept":"application/json"},
     });
   }
 
-  /** GET https://restful-booker.herokuapp.com/booking/?bogusparam=abc123 */
+  /** GET https://restful-booker.herokuapp.com/booking/?bogusparam=xyz123 */
   async confirmGETBookingIgnoresAnUnknownQuery(): Promise<APIResponse> {
-    return this.send("GET", "https://restful-booker.herokuapp.com/booking/?bogusparam=abc123", {
+    return this.send("GET", "https://restful-booker.herokuapp.com/booking/?bogusparam=xyz123", {
       headers: {"Accept":"application/json"},
     });
   }
 
-  /** GET https://restful-booker.herokuapp.com/booking/?firstname=John */
-  async verifyGETBookingFilteredByFirstnameReturns(): Promise<APIResponse> {
-    return this.send("GET", "https://restful-booker.herokuapp.com/booking/?firstname=John", {
+  /** DELETE https://restful-booker.herokuapp.com/booking/ */
+  async rejectDELETEAgainstTheBookingCollectionWithA(): Promise<APIResponse> {
+    return this.send("DELETE", "https://restful-booker.herokuapp.com/booking/", {
       headers: {"Accept":"application/json"},
     });
   }
@@ -83,23 +75,30 @@ export class BookingApi extends BaseApi {
     });
   }
 
-  /** GET https://restful-booker.herokuapp.com/booking?lastname=NoSuchPersonXYZ99999 */
-  async verifyGETBookingWithANonMatchingLastname(): Promise<APIResponse> {
-    return this.send("GET", "https://restful-booker.herokuapp.com/booking?lastname=NoSuchPersonXYZ99999", {
+  /** GET https://restful-booker.herokuapp.com/booking?lastname=ZzNoSuchLastname9999 */
+  async verifyGETBookingWithAnUnmatchedLastname(): Promise<APIResponse> {
+    return this.send("GET", "https://restful-booker.herokuapp.com/booking?lastname=ZzNoSuchLastname9999", {
       headers: {"Accept":"application/json"},
     });
   }
 
-  /** GET https://restful-booker.herokuapp.com/booking?lastname=Tester&bogusParam=abc123 */
+  /** GET https://restful-booker.herokuapp.com/booking?lastname=Tester&bogusparam=42 */
   async confirmGETBookingIgnoresAnUnknownQuery2(): Promise<APIResponse> {
-    return this.send("GET", "https://restful-booker.herokuapp.com/booking?lastname=Tester&bogusParam=abc123", {
+    return this.send("GET", "https://restful-booker.herokuapp.com/booking?lastname=Tester&bogusparam=42", {
       headers: {"Accept":"application/json"},
     });
   }
 
-  /** PUT https://restful-booker.herokuapp.com/booking?lastname=Tester */
-  async rejectPUTAgainstTheBookingListURLWithANon2xx(): Promise<APIResponse> {
-    return this.send("PUT", "https://restful-booker.herokuapp.com/booking?lastname=Tester", {
+  /** DELETE https://restful-booker.herokuapp.com/booking */
+  async rejectDELETEBookingCollectionWithANon2xx(): Promise<APIResponse> {
+    return this.send("DELETE", "https://restful-booker.herokuapp.com/booking", {
+      headers: {"Accept":"application/json"},
+    });
+  }
+
+  /** GET https://restful-booker.herokuapp.com/booking?lastname=Tester%27%20OR%20%271%27%3D%271 */
+  async ensureGETBookingWithASQLInjectionShaped(): Promise<APIResponse> {
+    return this.send("GET", "https://restful-booker.herokuapp.com/booking?lastname=Tester%27%20OR%20%271%27%3D%271", {
       headers: {"Accept":"application/json"},
     });
   }
@@ -107,22 +106,6 @@ export class BookingApi extends BaseApi {
   /** PUT https://restful-booker.herokuapp.com/booking/ */
   async verifyPUTBookingWithACompleteValidBooking(): Promise<APIResponse> {
     return this.send("PUT", "https://restful-booker.herokuapp.com/booking/", {
-      headers: {"Content-Type":"application/json","Accept":"application/json","Cookie":"token="},
-      data: "{\"firstname\":\"Updated\",\"lastname\":\"Tester\",\"totalprice\":500,\"depositpaid\":false,\"bookingdates\":{\"checkin\":\"2026-11-01\",\"checkout\":\"2026-11-03\"},\"additionalneeds\":\"Lunch\"}",
-    });
-  }
-
-  /** PUT https://restful-booker.herokuapp.com/booking/99999999 */
-  async returnA4xxForPUTBooking99999999WhenUpdatingA(): Promise<APIResponse> {
-    return this.send("PUT", "https://restful-booker.herokuapp.com/booking/99999999", {
-      headers: {"Content-Type":"application/json","Accept":"application/json","Cookie":"token="},
-      data: "{\"firstname\":\"Updated\",\"lastname\":\"Tester\",\"totalprice\":500,\"depositpaid\":false,\"bookingdates\":{\"checkin\":\"2026-11-01\",\"checkout\":\"2026-11-03\"},\"additionalneeds\":\"Lunch\"}",
-    });
-  }
-
-  /** PUT https://restful-booker.herokuapp.com/booking/abc */
-  async rejectPUTBookingAbcWithA4xxWhenANonNumeric(): Promise<APIResponse> {
-    return this.send("PUT", "https://restful-booker.herokuapp.com/booking/abc", {
       headers: {"Content-Type":"application/json","Accept":"application/json","Cookie":"token="},
       data: "{\"firstname\":\"Updated\",\"lastname\":\"Tester\",\"totalprice\":500,\"depositpaid\":false,\"bookingdates\":{\"checkin\":\"2026-11-01\",\"checkout\":\"2026-11-03\"},\"additionalneeds\":\"Lunch\"}",
     });
@@ -137,18 +120,26 @@ export class BookingApi extends BaseApi {
   }
 
   /** PUT https://restful-booker.herokuapp.com/booking/ */
-  async return400ForPUTBookingWhenTheRequestBodyIs(): Promise<APIResponse> {
+  async rejectPUTBookingWithA400WhenTheRequestBodyIs(): Promise<APIResponse> {
     return this.send("PUT", "https://restful-booker.herokuapp.com/booking/", {
       headers: {"Content-Type":"application/json","Accept":"application/json","Cookie":"token="},
-      data: "{\"firstname\":\"Updated\",\"lastname\":\"Tester\",",
+      data: "{\"firstname\":\"Updated\",\"lastname\":\"Tester\",\"totalprice\":500,",
     });
   }
 
-  /** PUT https://restful-booker.herokuapp.com/booking/ */
-  async rejectPUTBookingWithA4xxWhenTotalpriceIsSent(): Promise<APIResponse> {
-    return this.send("PUT", "https://restful-booker.herokuapp.com/booking/", {
+  /** PUT https://restful-booker.herokuapp.com/booking/99999999 */
+  async return404ForPUTBooking99999999WhenUpdatingA(): Promise<APIResponse> {
+    return this.send("PUT", "https://restful-booker.herokuapp.com/booking/99999999", {
       headers: {"Content-Type":"application/json","Accept":"application/json","Cookie":"token="},
-      data: "{\"firstname\":\"Updated\",\"lastname\":\"Tester\",\"totalprice\":\"five hundred\",\"depositpaid\":false,\"bookingdates\":{\"checkin\":\"2026-11-01\",\"checkout\":\"2026-11-03\"},\"additionalneeds\":\"Lunch\"}",
+      data: "{\"firstname\":\"Updated\",\"lastname\":\"Tester\",\"totalprice\":500,\"depositpaid\":false,\"bookingdates\":{\"checkin\":\"2026-11-01\",\"checkout\":\"2026-11-03\"},\"additionalneeds\":\"Lunch\"}",
+    });
+  }
+
+  /** PUT https://restful-booker.herokuapp.com/booking/abc */
+  async rejectPUTBookingAbcWithA4xxWhenANonNumeric(): Promise<APIResponse> {
+    return this.send("PUT", "https://restful-booker.herokuapp.com/booking/abc", {
+      headers: {"Content-Type":"application/json","Accept":"application/json","Cookie":"token="},
+      data: "{\"firstname\":\"Updated\",\"lastname\":\"Tester\",\"totalprice\":500,\"depositpaid\":false,\"bookingdates\":{\"checkin\":\"2026-11-01\",\"checkout\":\"2026-11-03\"},\"additionalneeds\":\"Lunch\"}",
     });
   }
 
@@ -160,24 +151,8 @@ export class BookingApi extends BaseApi {
     });
   }
 
-  /** PATCH https://restful-booker.herokuapp.com/booking/ */
-  async rejectPATCHBookingWithA4xxWhenTheRequestBody(): Promise<APIResponse> {
-    return this.send("PATCH", "https://restful-booker.herokuapp.com/booking/", {
-      headers: {"Content-Type":"application/json","Accept":"application/json"},
-      data: "{\"totalprice\": 999",
-    });
-  }
-
-  /** PATCH https://restful-booker.herokuapp.com/booking/ */
-  async rejectPATCHBookingWithA4xxWhenTheRequestBody2(): Promise<APIResponse> {
-    return this.send("PATCH", "https://restful-booker.herokuapp.com/booking/", {
-      headers: {"Content-Type":"application/json","Accept":"application/json"},
-      data: "{}",
-    });
-  }
-
   /** PATCH https://restful-booker.herokuapp.com/booking/99999999 */
-  async return404ForPATCHBooking99999999WhenThe(): Promise<APIResponse> {
+  async rejectPATCHBooking99999999WithANon2xxStatus(): Promise<APIResponse> {
     return this.send("PATCH", "https://restful-booker.herokuapp.com/booking/99999999", {
       headers: {"Content-Type":"application/json","Accept":"application/json"},
       data: "{\"totalprice\": 999}",
@@ -185,29 +160,38 @@ export class BookingApi extends BaseApi {
   }
 
   /** PATCH https://restful-booker.herokuapp.com/booking/not-a-number */
-  async rejectPATCHBookingNotANumberWithA4xxWhenANon(): Promise<APIResponse> {
+  async rejectPATCHBookingNotANumberWithA4xxWhenThe(): Promise<APIResponse> {
     return this.send("PATCH", "https://restful-booker.herokuapp.com/booking/not-a-number", {
       headers: {"Content-Type":"application/json","Accept":"application/json"},
       data: "{\"totalprice\": 999}",
     });
   }
 
-  /** DELETE https://restful-booker.herokuapp.com/booking/ */
-  async verifyDELETEBookingWithAValidTokenCookie(): Promise<APIResponse> {
-    return this.send("DELETE", "https://restful-booker.herokuapp.com/booking/", {
+  /** PATCH https://restful-booker.herokuapp.com/booking/ */
+  async rejectPATCHBookingWithA4xxWhenTheRequestBody(): Promise<APIResponse> {
+    return this.send("PATCH", "https://restful-booker.herokuapp.com/booking/", {
+      headers: {"Content-Type":"application/json","Accept":"application/json"},
+      data: "{}",
+    });
+  }
+
+  /** PATCH https://restful-booker.herokuapp.com/booking/ */
+  async rejectPATCHBookingWithA4xxWhenTheJSONBodyIs(): Promise<APIResponse> {
+    return this.send("PATCH", "https://restful-booker.herokuapp.com/booking/", {
+      headers: {"Content-Type":"application/json","Accept":"application/json"},
+      data: "{\"totalprice\": 999",
+    });
+  }
+
+  /** DELETE https://restful-booker.herokuapp.com/booking/1 */
+  async verifyDELETEBooking1WithAValidTokenCookie(): Promise<APIResponse> {
+    return this.send("DELETE", "https://restful-booker.herokuapp.com/booking/1", {
       headers: {"Cookie":"token=","Accept":"application/json"},
     });
   }
 
-  /** DELETE https://restful-booker.herokuapp.com/booking/ */
-  async rejectDELETEBookingWithAMalformedBogusToken(): Promise<APIResponse> {
-    return this.send("DELETE", "https://restful-booker.herokuapp.com/booking/", {
-      headers: {"Cookie":"token=invalid-token-000","Accept":"application/json"},
-    });
-  }
-
   /** DELETE https://restful-booker.herokuapp.com/booking/99999999 */
-  async return404405ForDELETEBooking99999999WhenThe(): Promise<APIResponse> {
+  async rejectDELETEBooking99999999ForANonExistent(): Promise<APIResponse> {
     return this.send("DELETE", "https://restful-booker.herokuapp.com/booking/99999999", {
       headers: {"Cookie":"token=","Accept":"application/json"},
     });
