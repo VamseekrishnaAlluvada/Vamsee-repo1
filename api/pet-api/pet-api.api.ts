@@ -17,7 +17,7 @@ export class PetApi extends BaseApi {
   }
 
   /** POST https://petstore.swagger.io/v2/pet */
-  async rejectPOSTV2PetWith400WhenTheRequestBodyIs(): Promise<APIResponse> {
+  async rejectPOSTV2PetWithA4xxWhenTheRequestBodyIs(): Promise<APIResponse> {
     return this.send("POST", "https://petstore.swagger.io/v2/pet", {
       headers: {"Content-Type":"application/json","Accept":"application/json"},
       data: "{\"id\":987654321,\"name\":\"QA-Doggo\",\"status\":\"available\"",
@@ -25,15 +25,15 @@ export class PetApi extends BaseApi {
   }
 
   /** POST https://petstore.swagger.io/v2/pet */
-  async rejectPOSTV2PetWithA4xxWhenTheIdFieldIsA(): Promise<APIResponse> {
+  async rejectPOSTV2PetWithA4xxWhenTheIdFieldCarries(): Promise<APIResponse> {
     return this.send("POST", "https://petstore.swagger.io/v2/pet", {
       headers: {"Content-Type":"application/json","Accept":"application/json"},
-      data: "{\"id\":\"not-a-number\",\"category\":{\"id\":1,\"name\":\"Dogs\"},\"name\":\"QA-Doggo\",\"photoUrls\":[\"https://example.com/dog.png\"],\"status\":\"available\"}",
+      data: "{\"id\":\"not-a-number\",\"category\":{\"id\":1,\"name\":\"Dogs\"},\"name\":\"QA-Doggo\",\"photoUrls\":[\"https://example.com/dog.png\"],\"tags\":[{\"id\":1,\"name\":\"automation\"}],\"status\":\"available\"}",
     });
   }
 
   /** GET https://petstore.swagger.io/v2/pet */
-  async rejectGETV2PetWith405BecauseTheCreate(): Promise<APIResponse> {
+  async return405ForGETAgainstPOSTOnlyV2PetCreate(): Promise<APIResponse> {
     return this.send("GET", "https://petstore.swagger.io/v2/pet", {
       headers: {"Content-Type":"application/json","Accept":"application/json"},
     });
