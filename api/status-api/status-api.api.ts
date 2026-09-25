@@ -9,23 +9,23 @@ import { BaseApi } from '../base.api';
  */
 export class StatusApi extends BaseApi {
   /** GET https://httpbin.org/status/500 */
-  async verifyGETStatus500ReturnsTheConfigured200(): Promise<APIResponse> {
+  async verifyGETStatus500Returns200AsTheConfigured(): Promise<APIResponse> {
     return this.send("GET", "https://httpbin.org/status/500", {
-      headers: {"Accept":"*/*"},
-    });
-  }
-
-  /** GET https://httpbin.org/status/abc */
-  async rejectGETStatusAbcWithA4xxWhenANonNumeric(): Promise<APIResponse> {
-    return this.send("GET", "https://httpbin.org/status/abc", {
-      headers: {"Accept":"*/*"},
+      headers: {"Accept":"application/json"},
     });
   }
 
   /** GET https://httpbin.org/status/99999999 */
-  async returnANon2xxForGETStatus99999999WhenAnOutOf(): Promise<APIResponse> {
+  async rejectGETStatus99999999WithANon2xxStatusFor(): Promise<APIResponse> {
     return this.send("GET", "https://httpbin.org/status/99999999", {
-      headers: {"Accept":"*/*"},
+      headers: {"Accept":"application/json"},
+    });
+  }
+
+  /** GET https://httpbin.org/status/abc */
+  async rejectGETStatusAbcWithA4xxWhenTheStatusCode(): Promise<APIResponse> {
+    return this.send("GET", "https://httpbin.org/status/abc", {
+      headers: {"Accept":"application/json"},
     });
   }
 }
