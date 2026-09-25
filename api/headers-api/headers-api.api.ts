@@ -15,16 +15,16 @@ export class HeadersApi extends BaseApi {
     });
   }
 
-  /** POST https://httpbin.org/headers */
-  async rejectPOSTHeadersWith405BecauseOnlyGETIs(): Promise<APIResponse> {
-    return this.send("POST", "https://httpbin.org/headers", {
+  /** GET https://httpbin.org/headers?foo=bar&limit=9999 */
+  async confirmGETHeadersIgnoresAnUnknownQuery(): Promise<APIResponse> {
+    return this.send("GET", "https://httpbin.org/headers?foo=bar&limit=9999", {
       headers: {"X-QA-Team":"Automation","Accept":"application/json"},
     });
   }
 
-  /** GET https://httpbin.org/headers?foo=bar&limit=10 */
-  async verifyGETHeadersIgnoresAnUnknownQuery(): Promise<APIResponse> {
-    return this.send("GET", "https://httpbin.org/headers?foo=bar&limit=10", {
+  /** POST https://httpbin.org/headers */
+  async rejectPOSTHeadersWith405BecauseTheEndpoint(): Promise<APIResponse> {
+    return this.send("POST", "https://httpbin.org/headers", {
       headers: {"X-QA-Team":"Automation","Accept":"application/json"},
     });
   }
