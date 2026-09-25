@@ -16,22 +16,22 @@ export class CommentsApi extends BaseApi {
   }
 
   /** GET https://jsonplaceholder.typicode.com/comments?postId=99999999 */
-  async returnAnEmptyArrayWith200ForGETComments(): Promise<APIResponse> {
+  async verifyGETCommentsPostId99999999Returns200(): Promise<APIResponse> {
     return this.send("GET", "https://jsonplaceholder.typicode.com/comments?postId=99999999", {
       headers: {"Accept":"application/json"},
     });
   }
 
   /** GET https://jsonplaceholder.typicode.com/comments?postId=abc */
-  async ensureGETCommentsPostIdAbcWithANonNumeric(): Promise<APIResponse> {
+  async verifyGETCommentsPostIdAbcHandlesANonNumeric(): Promise<APIResponse> {
     return this.send("GET", "https://jsonplaceholder.typicode.com/comments?postId=abc", {
       headers: {"Accept":"application/json"},
     });
   }
 
-  /** GET https://jsonplaceholder.typicode.com/comments?postId=1&unknownParam=foo */
-  async confirmGETCommentsPostId1UnknownParamFoo(): Promise<APIResponse> {
-    return this.send("GET", "https://jsonplaceholder.typicode.com/comments?postId=1&unknownParam=foo", {
+  /** GET https://jsonplaceholder.typicode.com/comments?postId=1&bogusParam=xyz */
+  async confirmGETCommentsPostId1IgnoresAnUnknown(): Promise<APIResponse> {
+    return this.send("GET", "https://jsonplaceholder.typicode.com/comments?postId=1&bogusParam=xyz", {
       headers: {"Accept":"application/json"},
     });
   }
