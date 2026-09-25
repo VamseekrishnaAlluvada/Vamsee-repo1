@@ -9,29 +9,22 @@ import { BaseApi } from '../base.api';
  */
 export class DelayApi extends BaseApi {
   /** GET https://httpbin.org/delay/2 */
-  async verifyGETHttpsHttpbinOrgDelay2Returns200With(): Promise<APIResponse> {
+  async verifyGETDelay2Returns200WithAJSONContent(): Promise<APIResponse> {
     return this.send("GET", "https://httpbin.org/delay/2", {
       headers: {"Accept":"application/json"},
     });
   }
 
-  /** GET https://httpbin.org/delay/2?foo=bar */
-  async confirmGETHttpsHttpbinOrgDelay2IgnoresAn(): Promise<APIResponse> {
-    return this.send("GET", "https://httpbin.org/delay/2?foo=bar", {
-      headers: {"Accept":"application/json"},
-    });
-  }
-
-  /** POST https://httpbin.org/delay/2 */
-  async rejectPOSTHttpsHttpbinOrgDelay2WithA405When(): Promise<APIResponse> {
-    return this.send("POST", "https://httpbin.org/delay/2", {
-      headers: {"Accept":"application/json"},
-    });
-  }
-
   /** GET https://httpbin.org/delay/abc */
-  async rejectGETHttpsHttpbinOrgDelayAbcWithA4xxWhen(): Promise<APIResponse> {
+  async rejectGETDelayAbcWithA404WhenTheDelaySegment(): Promise<APIResponse> {
     return this.send("GET", "https://httpbin.org/delay/abc", {
+      headers: {"Accept":"application/json"},
+    });
+  }
+
+  /** GET https://httpbin.org/delay/2?foo=bar */
+  async confirmGETDelay2IgnoresAnUnknownQuery(): Promise<APIResponse> {
+    return this.send("GET", "https://httpbin.org/delay/2?foo=bar", {
       headers: {"Accept":"application/json"},
     });
   }
