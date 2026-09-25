@@ -9,29 +9,29 @@ import { BaseApi } from '../base.api';
  */
 export class ProductsApi extends BaseApi {
   /** GET https://dummyjson.com/products?limit=10&skip=10&select=title,price */
-  async verifyGETProductsWithLimit10Skip10Select(): Promise<APIResponse> {
+  async verifyGETProductsLimit10Skip10SelectTitle(): Promise<APIResponse> {
     return this.send("GET", "https://dummyjson.com/products?limit=10&skip=10&select=title,price", {
       headers: {"Accept":"application/json"},
     });
   }
 
   /** GET https://dummyjson.com/products?limit=abc&skip=10&select=title,price */
-  async verifyGETProductsWithANonNumericLimitDoesNot(): Promise<APIResponse> {
+  async rejectGETProductsWithA4xxWhenTheLimit(): Promise<APIResponse> {
     return this.send("GET", "https://dummyjson.com/products?limit=abc&skip=10&select=title,price", {
       headers: {"Accept":"application/json"},
     });
   }
 
-  /** POST https://dummyjson.com/products?limit=10&skip=10&select=title,price */
-  async rejectPOSTProductsAgainstTheListURLWithANon(): Promise<APIResponse> {
-    return this.send("POST", "https://dummyjson.com/products?limit=10&skip=10&select=title,price", {
+  /** GET https://dummyjson.com/products?limit=-5&skip=10&select=title,price */
+  async rejectGETProductsWithA4xxWhenLimitIsNegative(): Promise<APIResponse> {
+    return this.send("GET", "https://dummyjson.com/products?limit=-5&skip=10&select=title,price", {
       headers: {"Accept":"application/json"},
     });
   }
 
-  /** GET https://dummyjson.com/products?limit=10&skip=10&select=title,price&bogusParam=xyz */
-  async verifyGETProductsIgnoresAnUnknownQuery(): Promise<APIResponse> {
-    return this.send("GET", "https://dummyjson.com/products?limit=10&skip=10&select=title,price&bogusParam=xyz", {
+  /** GET https://dummyjson.com/products/99999999 */
+  async return404ForGETProducts99999999WhenThe(): Promise<APIResponse> {
+    return this.send("GET", "https://dummyjson.com/products/99999999", {
       headers: {"Accept":"application/json"},
     });
   }
