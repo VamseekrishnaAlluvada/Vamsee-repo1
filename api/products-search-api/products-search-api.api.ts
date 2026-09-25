@@ -15,23 +15,23 @@ export class ProductsSearchApi extends BaseApi {
     });
   }
 
-  /** GET https://dummyjson.com/products/search?q=zzzznomatchqueryzzzz */
+  /** GET https://dummyjson.com/products/search?q=zzzznonexistentproductxyz */
   async verifyGETProductsSearchWithANoMatchQuery(): Promise<APIResponse> {
-    return this.send("GET", "https://dummyjson.com/products/search?q=zzzznomatchqueryzzzz", {
+    return this.send("GET", "https://dummyjson.com/products/search?q=zzzznonexistentproductxyz", {
       headers: {"Accept":"application/json"},
     });
   }
 
-  /** GET https://dummyjson.com/products/search?q=phone&bogusParam=xyz */
-  async confirmGETProductsSearchIgnoresAnUnknown(): Promise<APIResponse> {
-    return this.send("GET", "https://dummyjson.com/products/search?q=phone&bogusParam=xyz", {
+  /** GET https://dummyjson.com/products/search?q=phone&limit=5 */
+  async verifyGETProductsSearchQPhoneLimit5Honours(): Promise<APIResponse> {
+    return this.send("GET", "https://dummyjson.com/products/search?q=phone&limit=5", {
       headers: {"Accept":"application/json"},
     });
   }
 
-  /** POST https://dummyjson.com/products/search?q=phone */
-  async rejectPOSTProductsSearchWithANon2xxStatus(): Promise<APIResponse> {
-    return this.send("POST", "https://dummyjson.com/products/search?q=phone", {
+  /** GET https://dummyjson.com/products/search?q=phone&limit=abc */
+  async verifyGETProductsSearchQPhoneLimitAbcWithA(): Promise<APIResponse> {
+    return this.send("GET", "https://dummyjson.com/products/search?q=phone&limit=abc", {
       headers: {"Accept":"application/json"},
     });
   }
