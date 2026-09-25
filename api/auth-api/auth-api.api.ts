@@ -17,15 +17,15 @@ export class AuthApi extends BaseApi {
   }
 
   /** POST https://restful-booker.herokuapp.com/auth */
-  async rejectPOSTAuthWithA4xxWhenTheRequired(): Promise<APIResponse> {
+  async confirmPOSTAuthWithAnInvalidPasswordReturns(): Promise<APIResponse> {
     return this.send("POST", "https://restful-booker.herokuapp.com/auth", {
       headers: {"Content-Type":"application/json","Accept":"application/json"},
-      data: "{\"username\":\"admin\"}",
+      data: "{\"username\":\"admin\",\"password\":\"wrong-password\"}",
     });
   }
 
   /** POST https://restful-booker.herokuapp.com/auth */
-  async return400ForPOSTAuthWhenTheRequestBodyIs(): Promise<APIResponse> {
+  async rejectPOSTAuthWithAMalformedJSONBodyBy(): Promise<APIResponse> {
     return this.send("POST", "https://restful-booker.herokuapp.com/auth", {
       headers: {"Content-Type":"application/json","Accept":"application/json"},
       data: "{\"username\":\"admin\",\"password\":}",
@@ -33,10 +33,17 @@ export class AuthApi extends BaseApi {
   }
 
   /** POST https://restful-booker.herokuapp.com/auth */
-  async rejectPOSTAuthWithA4xxWhenSubmittingInvalid(): Promise<APIResponse> {
+  async confirmPOSTAuthWithThePasswordFieldOmitted(): Promise<APIResponse> {
     return this.send("POST", "https://restful-booker.herokuapp.com/auth", {
       headers: {"Content-Type":"application/json","Accept":"application/json"},
-      data: "{\"username\":\"wronguser\",\"password\":\"wrongpass\"}",
+      data: "{\"username\":\"admin\"}",
+    });
+  }
+
+  /** GET https://restful-booker.herokuapp.com/auth */
+  async rejectAGETRequestAgainstPOSTOnlyAuthWithA404(): Promise<APIResponse> {
+    return this.send("GET", "https://restful-booker.herokuapp.com/auth", {
+      headers: {"Content-Type":"application/json","Accept":"application/json"},
     });
   }
 }
