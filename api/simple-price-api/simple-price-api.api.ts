@@ -9,21 +9,35 @@ import { BaseApi } from '../base.api';
  */
 export class SimplePriceApi extends BaseApi {
   /** GET https://api.coingecko.com/api/v3/simple/price?ids=bitcoin,ethereum&vs_currencies=usd,inr */
-  async verifyGETSimplePriceForBitcoinEthereumInUsd(): Promise<APIResponse> {
+  async verifyGETSimplePriceWithIdsBitcoinEthereum(): Promise<APIResponse> {
     return this.send("GET", "https://api.coingecko.com/api/v3/simple/price?ids=bitcoin,ethereum&vs_currencies=usd,inr", {
       headers: {"Accept":"application/json"},
     });
   }
 
   /** GET https://api.coingecko.com/api/v3/simple/price?ids=bitcoin,ethereum */
-  async rejectGETSimplePriceWith4xxWhenTheRequiredVs(): Promise<APIResponse> {
+  async rejectGETSimplePriceWithA4xxWhenTheRequired(): Promise<APIResponse> {
     return this.send("GET", "https://api.coingecko.com/api/v3/simple/price?ids=bitcoin,ethereum", {
       headers: {"Accept":"application/json"},
     });
   }
 
+  /** GET https://api.coingecko.com/api/v3/simple/price?vs_currencies=usd,inr */
+  async rejectGETSimplePriceWithA4xxWhenTheRequired2(): Promise<APIResponse> {
+    return this.send("GET", "https://api.coingecko.com/api/v3/simple/price?vs_currencies=usd,inr", {
+      headers: {"Accept":"application/json"},
+    });
+  }
+
+  /** GET https://api.coingecko.com/api/v3/simple/price?ids=bitcoin,ethereum&vs_currencies=usd,inr&bogusParam=abc123 */
+  async confirmGETSimplePriceReturns200AndIgnoresAn(): Promise<APIResponse> {
+    return this.send("GET", "https://api.coingecko.com/api/v3/simple/price?ids=bitcoin,ethereum&vs_currencies=usd,inr&bogusParam=abc123", {
+      headers: {"Accept":"application/json"},
+    });
+  }
+
   /** POST https://api.coingecko.com/api/v3/simple/price?ids=bitcoin,ethereum&vs_currencies=usd,inr */
-  async rejectPOSTSimplePriceWith4xx405SinceOnlyGET(): Promise<APIResponse> {
+  async rejectPOSTSimplePriceWithA4xxBecauseOnlyGET(): Promise<APIResponse> {
     return this.send("POST", "https://api.coingecko.com/api/v3/simple/price?ids=bitcoin,ethereum&vs_currencies=usd,inr", {
       headers: {"Accept":"application/json"},
     });
