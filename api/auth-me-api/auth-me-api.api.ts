@@ -9,8 +9,15 @@ import { BaseApi } from '../base.api';
  */
 export class AuthMeApi extends BaseApi {
   /** GET https://dummyjson.com/auth/me */
-  async verifyGETAuthMeReturns200WithANonEmptyJSON(): Promise<APIResponse> {
+  async verifyGETAuthMeReturns200WithAJSONContent(): Promise<APIResponse> {
     return this.send("GET", "https://dummyjson.com/auth/me", {
+      headers: {"Accept":"application/json"},
+    });
+  }
+
+  /** POST https://dummyjson.com/auth/me */
+  async rejectPOSTAuthMeWithA4xxBecauseTheMeResource(): Promise<APIResponse> {
+    return this.send("POST", "https://dummyjson.com/auth/me", {
       headers: {"Accept":"application/json"},
     });
   }
@@ -22,9 +29,9 @@ export class AuthMeApi extends BaseApi {
     });
   }
 
-  /** POST https://dummyjson.com/auth/me */
-  async rejectPOSTAuthMeWithANon2xxStatusBecauseOnly(): Promise<APIResponse> {
-    return this.send("POST", "https://dummyjson.com/auth/me", {
+  /** GET https://dummyjson.com/auth/me/ */
+  async confirmGETAuthMeWithATrailingSlashDoesNot(): Promise<APIResponse> {
+    return this.send("GET", "https://dummyjson.com/auth/me/", {
       headers: {"Accept":"application/json"},
     });
   }
