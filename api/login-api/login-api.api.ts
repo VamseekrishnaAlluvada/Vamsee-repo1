@@ -17,7 +17,15 @@ export class LoginApi extends BaseApi {
   }
 
   /** POST https://dummyjson.com/auth/login */
-  async rejectPOSTAuthLoginWithA4xxWhenThePassword(): Promise<APIResponse> {
+  async rejectPOSTAuthLoginWith400WhenThePasswordIs(): Promise<APIResponse> {
+    return this.send("POST", "https://dummyjson.com/auth/login", {
+      headers: {"Content-Type":"application/json","Accept":"application/json"},
+      data: "{\"username\":\"emilys\",\"password\":\"wrongpassword\",\"expiresInMins\":30}",
+    });
+  }
+
+  /** POST https://dummyjson.com/auth/login */
+  async rejectPOSTAuthLoginWith400WhenTheRequired(): Promise<APIResponse> {
     return this.send("POST", "https://dummyjson.com/auth/login", {
       headers: {"Content-Type":"application/json","Accept":"application/json"},
       data: "{\"username\":\"emilys\",\"expiresInMins\":30}",
@@ -28,23 +36,22 @@ export class LoginApi extends BaseApi {
   async rejectPOSTAuthLoginWith400WhenTheRequestBody(): Promise<APIResponse> {
     return this.send("POST", "https://dummyjson.com/auth/login", {
       headers: {"Content-Type":"application/json","Accept":"application/json"},
-      data: "{\"username\":\"emilys\",\"password\":}",
+      data: "{\"username\":\"emilys\",\"password\":\"emilyspass\",",
     });
   }
 
   /** POST https://dummyjson.com/auth/login */
-  async rejectPOSTAuthLoginWithA4xxWhenThePasswordIs(): Promise<APIResponse> {
-    return this.send("POST", "https://dummyjson.com/auth/login", {
-      headers: {"Content-Type":"application/json","Accept":"application/json"},
-      data: "{\"username\":\"emilys\",\"password\":\"wrongpassword\",\"expiresInMins\":30}",
-    });
-  }
-
-  /** POST https://dummyjson.com/auth/login */
-  async rejectPOSTAuthLoginWithA4xxWhenAnEmptyJSON(): Promise<APIResponse> {
+  async rejectPOSTAuthLoginWithAClientErrorWhenAn(): Promise<APIResponse> {
     return this.send("POST", "https://dummyjson.com/auth/login", {
       headers: {"Content-Type":"application/json","Accept":"application/json"},
       data: "{}",
+    });
+  }
+
+  /** GET https://dummyjson.com/auth/login */
+  async rejectGETAuthLoginWithA4xx405BecauseTheLogin(): Promise<APIResponse> {
+    return this.send("GET", "https://dummyjson.com/auth/login", {
+      headers: {"Content-Type":"application/json","Accept":"application/json"},
     });
   }
 }
