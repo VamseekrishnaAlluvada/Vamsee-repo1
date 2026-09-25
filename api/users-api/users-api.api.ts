@@ -23,8 +23,22 @@ export class UsersApi extends BaseApi {
   }
 
   /** GET https://jsonplaceholder.typicode.com/users/abc */
-  async rejectGETUsersAbcWithA4xxWhenTheIdPath(): Promise<APIResponse> {
+  async rejectGETUsersAbcWithA4xxWhenANonNumericIdIs(): Promise<APIResponse> {
     return this.send("GET", "https://jsonplaceholder.typicode.com/users/abc", {
+      headers: {"Accept":"application/json"},
+    });
+  }
+
+  /** POST https://jsonplaceholder.typicode.com/users/1 */
+  async rejectPOSTUsers1WithA4xxWhenUsingAn(): Promise<APIResponse> {
+    return this.send("POST", "https://jsonplaceholder.typicode.com/users/1", {
+      headers: {"Accept":"application/json"},
+    });
+  }
+
+  /** GET https://jsonplaceholder.typicode.com/users/!!! */
+  async rejectGETUsersWithA4xxWhenThePathIdContains(): Promise<APIResponse> {
+    return this.send("GET", "https://jsonplaceholder.typicode.com/users/!!!", {
       headers: {"Accept":"application/json"},
     });
   }
