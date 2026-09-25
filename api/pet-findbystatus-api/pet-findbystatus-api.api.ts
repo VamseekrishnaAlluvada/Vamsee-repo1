@@ -15,30 +15,23 @@ export class PetFindbystatusApi extends BaseApi {
     });
   }
 
-  /** GET https://petstore.swagger.io/v2/pet/findByStatus?status=not_a_real_status */
-  async rejectGETV2PetFindByStatusWith400WhenThe(): Promise<APIResponse> {
-    return this.send("GET", "https://petstore.swagger.io/v2/pet/findByStatus?status=not_a_real_status", {
-      headers: {"Accept":"application/json"},
-    });
-  }
-
-  /** GET https://petstore.swagger.io/v2/pet/findByStatus */
-  async rejectGETV2PetFindByStatusWith400WhenThe2(): Promise<APIResponse> {
-    return this.send("GET", "https://petstore.swagger.io/v2/pet/findByStatus", {
+  /** POST https://petstore.swagger.io/v2/pet/findByStatus?status=available */
+  async rejectPOSTAgainstV2PetFindByStatusWithA405(): Promise<APIResponse> {
+    return this.send("POST", "https://petstore.swagger.io/v2/pet/findByStatus?status=available", {
       headers: {"Accept":"application/json"},
     });
   }
 
   /** GET https://petstore.swagger.io/v2/pet/findByStatus?status=available&foo=bar */
-  async confirmGETV2PetFindByStatusStatusAvailable(): Promise<APIResponse> {
+  async confirmGETV2PetFindByStatusIgnoresAnUnknown(): Promise<APIResponse> {
     return this.send("GET", "https://petstore.swagger.io/v2/pet/findByStatus?status=available&foo=bar", {
       headers: {"Accept":"application/json"},
     });
   }
 
-  /** POST https://petstore.swagger.io/v2/pet/findByStatus?status=available */
-  async rejectPOSTV2PetFindByStatusStatusAvailable(): Promise<APIResponse> {
-    return this.send("POST", "https://petstore.swagger.io/v2/pet/findByStatus?status=available", {
+  /** GET https://petstore.swagger.io/v2/pet/findByStatus?status=not_a_real_status */
+  async verifyGETV2PetFindByStatusWithAnInvalid(): Promise<APIResponse> {
+    return this.send("GET", "https://petstore.swagger.io/v2/pet/findByStatus?status=not_a_real_status", {
       headers: {"Accept":"application/json"},
     });
   }
