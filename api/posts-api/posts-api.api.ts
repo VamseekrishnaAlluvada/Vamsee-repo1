@@ -16,7 +16,7 @@ export class PostsApi extends BaseApi {
   }
 
   /** GET https://jsonplaceholder.typicode.com/posts/99999999 */
-  async return404ForGETPosts99999999WhenThePostId(): Promise<APIResponse> {
+  async return404ForGETPosts99999999WhenTheRequested(): Promise<APIResponse> {
     return this.send("GET", "https://jsonplaceholder.typicode.com/posts/99999999", {
       headers: {"Accept":"application/json"},
     });
@@ -29,6 +29,13 @@ export class PostsApi extends BaseApi {
     });
   }
 
+  /** GET https://jsonplaceholder.typicode.com/posts?bogusParam=xyz */
+  async confirmGETPostsIgnoresAnUnknownQuery(): Promise<APIResponse> {
+    return this.send("GET", "https://jsonplaceholder.typicode.com/posts?bogusParam=xyz", {
+      headers: {"Accept":"application/json"},
+    });
+  }
+
   /** GET https://jsonplaceholder.typicode.com/posts/1 */
   async verifyGETPosts1Returns200WithANonEmptyJSON(): Promise<APIResponse> {
     return this.send("GET", "https://jsonplaceholder.typicode.com/posts/1", {
@@ -37,22 +44,21 @@ export class PostsApi extends BaseApi {
   }
 
   /** GET https://jsonplaceholder.typicode.com/posts/not-a-number */
-  async rejectGETPostsNotANumberWithA4xxWhenTheIdIs(): Promise<APIResponse> {
+  async rejectGETPostsNotANumberWithA4xxWhenANon(): Promise<APIResponse> {
     return this.send("GET", "https://jsonplaceholder.typicode.com/posts/not-a-number", {
       headers: {"Accept":"application/json"},
     });
   }
 
-  /** POST https://jsonplaceholder.typicode.com/posts/1 */
-  async rejectDELETELessWriteViaPOSTPosts1WithA4xxAs(): Promise<APIResponse> {
-    return this.send("POST", "https://jsonplaceholder.typicode.com/posts/1", {
-      headers: {"Accept":"application/json","Content-Type":"application/json"},
-      data: "{}",
+  /** GET https://jsonplaceholder.typicode.com/posts/1?foo=bar */
+  async confirmGETPosts1IgnoresAnUnknownQuery(): Promise<APIResponse> {
+    return this.send("GET", "https://jsonplaceholder.typicode.com/posts/1?foo=bar", {
+      headers: {"Accept":"application/json"},
     });
   }
 
   /** POST https://jsonplaceholder.typicode.com/posts */
-  async verifyPOSTPostsWithTheDocumentedBodyReturns(): Promise<APIResponse> {
+  async verifyPOSTPostsCreatesAResourceAndReturns200(): Promise<APIResponse> {
     return this.send("POST", "https://jsonplaceholder.typicode.com/posts", {
       headers: {"Content-Type":"application/json; charset=UTF-8","Accept":"application/json"},
       data: "{\"title\":\"QA Automation Post\",\"body\":\"Created from Postman collection\",\"userId\":1}",
@@ -60,7 +66,7 @@ export class PostsApi extends BaseApi {
   }
 
   /** POST https://jsonplaceholder.typicode.com/posts */
-  async rejectPOSTPostsRequestThatOmitsTheRequired(): Promise<APIResponse> {
+  async rejectPOSTPostsWithA4xxWhenTheRequiredTitle(): Promise<APIResponse> {
     return this.send("POST", "https://jsonplaceholder.typicode.com/posts", {
       headers: {"Content-Type":"application/json; charset=UTF-8","Accept":"application/json"},
       data: "{\"body\":\"Created from Postman collection\",\"userId\":1}",
@@ -68,33 +74,26 @@ export class PostsApi extends BaseApi {
   }
 
   /** POST https://jsonplaceholder.typicode.com/posts */
-  async rejectPOSTPostsWithA4xxWhenTheRequestBodyIs(): Promise<APIResponse> {
+  async return400ForPOSTPostsWhenTheRequestBodyIs(): Promise<APIResponse> {
     return this.send("POST", "https://jsonplaceholder.typicode.com/posts", {
       headers: {"Content-Type":"application/json; charset=UTF-8","Accept":"application/json"},
-      data: "{\"title\":\"QA Automation Post\",\"body\":\"broken\",\"userId\":1",
+      data: "{\"title\":\"QA Automation Post\",\"body\":\"Created from Postman collection\",\"userId\":1",
     });
   }
 
-  /** DELETE https://jsonplaceholder.typicode.com/posts */
-  async rejectDELETEAgainstPOSTOnlyCollectionURL(): Promise<APIResponse> {
-    return this.send("DELETE", "https://jsonplaceholder.typicode.com/posts", {
+  /** POST https://jsonplaceholder.typicode.com/posts */
+  async rejectPOSTPostsWithA4xxWhenUserIdIsAString(): Promise<APIResponse> {
+    return this.send("POST", "https://jsonplaceholder.typicode.com/posts", {
       headers: {"Content-Type":"application/json; charset=UTF-8","Accept":"application/json"},
+      data: "{\"title\":\"QA Automation Post\",\"body\":\"Created from Postman collection\",\"userId\":\"one\"}",
     });
   }
 
   /** PUT https://jsonplaceholder.typicode.com/posts/1 */
-  async verifyPUTPosts1WithTheFullDocumentedBody(): Promise<APIResponse> {
+  async verifyPUTPosts1Returns200WithAJSONBodyWhen(): Promise<APIResponse> {
     return this.send("PUT", "https://jsonplaceholder.typicode.com/posts/1", {
       headers: {"Content-Type":"application/json; charset=UTF-8","Accept":"application/json"},
       data: "{\"id\":1,\"title\":\"Updated Title\",\"body\":\"Updated body\",\"userId\":1}",
-    });
-  }
-
-  /** PUT https://jsonplaceholder.typicode.com/posts/1 */
-  async rejectPUTPosts1WithA4xxWhenTheBodyOmitsThe(): Promise<APIResponse> {
-    return this.send("PUT", "https://jsonplaceholder.typicode.com/posts/1", {
-      headers: {"Content-Type":"application/json; charset=UTF-8","Accept":"application/json"},
-      data: "{\"id\":1,\"body\":\"Updated body\",\"userId\":1}",
     });
   }
 
@@ -102,36 +101,36 @@ export class PostsApi extends BaseApi {
   async rejectPUTPosts1WithA4xxWhenTheRequestBodyIs(): Promise<APIResponse> {
     return this.send("PUT", "https://jsonplaceholder.typicode.com/posts/1", {
       headers: {"Content-Type":"application/json; charset=UTF-8","Accept":"application/json"},
-      data: "{\"id\":1,\"title\":\"Updated Title\",\"body\":",
+      data: "{\"id\":1,\"title\":\"Updated Title\",",
+    });
+  }
+
+  /** PUT https://jsonplaceholder.typicode.com/posts/abc */
+  async rejectPUTPosts1WithA4xxWhenANonNumericIdPath(): Promise<APIResponse> {
+    return this.send("PUT", "https://jsonplaceholder.typicode.com/posts/abc", {
+      headers: {"Content-Type":"application/json; charset=UTF-8","Accept":"application/json"},
+      data: "{\"id\":1,\"title\":\"Updated Title\",\"body\":\"Updated body\",\"userId\":1}",
     });
   }
 
   /** PUT https://jsonplaceholder.typicode.com/posts/99999999 */
-  async return404ForPUTPosts99999999TargetingAPostId(): Promise<APIResponse> {
+  async return404ForPUTPosts99999999WhenUpdatingA(): Promise<APIResponse> {
     return this.send("PUT", "https://jsonplaceholder.typicode.com/posts/99999999", {
       headers: {"Content-Type":"application/json; charset=UTF-8","Accept":"application/json"},
       data: "{\"id\":99999999,\"title\":\"Updated Title\",\"body\":\"Updated body\",\"userId\":1}",
     });
   }
 
-  /** PUT https://jsonplaceholder.typicode.com/posts/not-a-number */
-  async rejectPUTPostsNotANumberWithA4xxWhenThePath(): Promise<APIResponse> {
-    return this.send("PUT", "https://jsonplaceholder.typicode.com/posts/not-a-number", {
-      headers: {"Content-Type":"application/json; charset=UTF-8","Accept":"application/json"},
-      data: "{\"id\":1,\"title\":\"Updated Title\",\"body\":\"Updated body\",\"userId\":1}",
-    });
-  }
-
   /** PATCH https://jsonplaceholder.typicode.com/posts/1 */
-  async verifyPATCHPosts1Returns200WithAJSONBodyWhen(): Promise<APIResponse> {
+  async verifyPATCHPosts1WithAValidTitleReturns200(): Promise<APIResponse> {
     return this.send("PATCH", "https://jsonplaceholder.typicode.com/posts/1", {
       headers: {"Content-Type":"application/json; charset=UTF-8","Accept":"application/json"},
-      data: "{\"title\":\"Patched Title\"}",
+      data: "{\"title\": \"Patched Title\"}",
     });
   }
 
   /** PATCH https://jsonplaceholder.typicode.com/posts/1 */
-  async rejectPATCHPosts1WithA4xxWhenTheRequestBody(): Promise<APIResponse> {
+  async rejectPATCHPosts1With400WhenTheRequestBodyIs(): Promise<APIResponse> {
     return this.send("PATCH", "https://jsonplaceholder.typicode.com/posts/1", {
       headers: {"Content-Type":"application/json; charset=UTF-8","Accept":"application/json"},
       data: "{\"title\": \"Patched Title\"",
@@ -139,52 +138,52 @@ export class PostsApi extends BaseApi {
   }
 
   /** PATCH https://jsonplaceholder.typicode.com/posts/99999999 */
-  async verifyPATCHPosts99999999ForANonExistentPost(): Promise<APIResponse> {
+  async return404ForPATCHPosts99999999WhenTheTarget(): Promise<APIResponse> {
     return this.send("PATCH", "https://jsonplaceholder.typicode.com/posts/99999999", {
       headers: {"Content-Type":"application/json; charset=UTF-8","Accept":"application/json"},
-      data: "{\"title\":\"Patched Title\"}",
+      data: "{\"title\": \"Patched Title\"}",
     });
   }
 
-  /** PATCH https://jsonplaceholder.typicode.com/posts/abc */
-  async rejectPATCHPostsAbcWithA4xxWhenANonNumericId(): Promise<APIResponse> {
-    return this.send("PATCH", "https://jsonplaceholder.typicode.com/posts/abc", {
+  /** PATCH https://jsonplaceholder.typicode.com/posts/not-a-number */
+  async rejectPATCHPostsNotANumberWithA4xxWhenTheId(): Promise<APIResponse> {
+    return this.send("PATCH", "https://jsonplaceholder.typicode.com/posts/not-a-number", {
       headers: {"Content-Type":"application/json; charset=UTF-8","Accept":"application/json"},
-      data: "{\"title\":\"Patched Title\"}",
+      data: "{\"title\": \"Patched Title\"}",
     });
   }
 
   /** DELETE https://jsonplaceholder.typicode.com/posts/1 */
-  async verifyDELETEPosts1Returns200ConfirmingThe(): Promise<APIResponse> {
+  async verifyDELETEPosts1Returns200AndAJSONContent(): Promise<APIResponse> {
     return this.send("DELETE", "https://jsonplaceholder.typicode.com/posts/1", {
       headers: {"Accept":"application/json"},
     });
   }
 
   /** DELETE https://jsonplaceholder.typicode.com/posts/99999999 */
-  async confirmDELETEPosts99999999DoesNotReturnA5xx(): Promise<APIResponse> {
+  async returnANon2xxStatusForDELETEPosts99999999(): Promise<APIResponse> {
     return this.send("DELETE", "https://jsonplaceholder.typicode.com/posts/99999999", {
       headers: {"Accept":"application/json"},
     });
   }
 
   /** DELETE https://jsonplaceholder.typicode.com/posts/not-a-number */
-  async rejectDELETEPostsNotANumberWithA4xxForANon(): Promise<APIResponse> {
+  async rejectDELETEPostsNotANumberWithA4xxWhenANon(): Promise<APIResponse> {
     return this.send("DELETE", "https://jsonplaceholder.typicode.com/posts/not-a-number", {
       headers: {"Accept":"application/json"},
     });
   }
 
-  /** TRACE https://jsonplaceholder.typicode.com/posts/1 */
-  async returnA4xxForAnUnsupportedHTTPTRACEMethod(): Promise<APIResponse> {
-    return this.send("TRACE", "https://jsonplaceholder.typicode.com/posts/1", {
+  /** GET https://jsonplaceholder.typicode.com/posts/9999 */
+  async verifyGETPosts9999Returns200WithAJSONContent(): Promise<APIResponse> {
+    return this.send("GET", "https://jsonplaceholder.typicode.com/posts/9999", {
       headers: {"Accept":"application/json"},
     });
   }
 
-  /** GET https://jsonplaceholder.typicode.com/posts/9999 */
-  async verifyGETPosts9999Returns200WithANonEmpty(): Promise<APIResponse> {
-    return this.send("GET", "https://jsonplaceholder.typicode.com/posts/9999", {
+  /** GET https://jsonplaceholder.typicode.com/posts/9999?foo=bar */
+  async confirmGETPosts9999IgnoresAnUnknownQuery(): Promise<APIResponse> {
+    return this.send("GET", "https://jsonplaceholder.typicode.com/posts/9999?foo=bar", {
       headers: {"Accept":"application/json"},
     });
   }
