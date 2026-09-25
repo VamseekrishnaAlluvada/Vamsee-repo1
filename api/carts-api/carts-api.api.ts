@@ -9,7 +9,7 @@ import { BaseApi } from '../base.api';
  */
 export class CartsApi extends BaseApi {
   /** POST https://dummyjson.com/carts/add */
-  async verifyPOSTCartsAddReturns200WithAJSONCart(): Promise<APIResponse> {
+  async verifyPOSTCartsAddReturns200WithANonEmpty(): Promise<APIResponse> {
     return this.send("POST", "https://dummyjson.com/carts/add", {
       headers: {"Content-Type":"application/json","Accept":"application/json"},
       data: "{\"userId\":1,\"products\":[{\"id\":144,\"quantity\":4},{\"id\":98,\"quantity\":1}]}",
@@ -33,7 +33,7 @@ export class CartsApi extends BaseApi {
   }
 
   /** POST https://dummyjson.com/carts/add */
-  async rejectPOSTCartsAddWithA4xxWhenUserIdIsSentAs(): Promise<APIResponse> {
+  async rejectPOSTCartsAddWithA4xxWhenUserIdIsA(): Promise<APIResponse> {
     return this.send("POST", "https://dummyjson.com/carts/add", {
       headers: {"Content-Type":"application/json","Accept":"application/json"},
       data: "{\"userId\":\"one\",\"products\":[{\"id\":144,\"quantity\":4}]}",
