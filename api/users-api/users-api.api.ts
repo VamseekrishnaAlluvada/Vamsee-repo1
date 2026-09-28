@@ -9,29 +9,36 @@ import { BaseApi } from '../base.api';
  */
 export class UsersApi extends BaseApi {
   /** GET https://jsonplaceholder.typicode.com/users/1 */
-  async verifyGETUsers1Returns200WithANonEmptyJSON(): Promise<APIResponse> {
+  async verifyGETUsers1Returns200WithAJSONContent(): Promise<APIResponse> {
     return this.send("GET", "https://jsonplaceholder.typicode.com/users/1", {
       headers: {"Accept":"application/json"},
     });
   }
 
   /** GET https://jsonplaceholder.typicode.com/users/99999999 */
-  async return404ForGETUsers99999999WhenTheUserId(): Promise<APIResponse> {
+  async return404ForGETUsers99999999WhenTheRequested(): Promise<APIResponse> {
     return this.send("GET", "https://jsonplaceholder.typicode.com/users/99999999", {
       headers: {"Accept":"application/json"},
     });
   }
 
   /** GET https://jsonplaceholder.typicode.com/users/abc */
-  async rejectGETUsersAbcWithA4xxWhenTheIdIsNon(): Promise<APIResponse> {
+  async rejectGETUsersAbcWithA4xxWhenANonNumericIdIs(): Promise<APIResponse> {
     return this.send("GET", "https://jsonplaceholder.typicode.com/users/abc", {
       headers: {"Accept":"application/json"},
     });
   }
 
   /** POST https://jsonplaceholder.typicode.com/users/1 */
-  async rejectPOSTUsers1WithA4xx405WhenUsingAn(): Promise<APIResponse> {
+  async rejectPOSTUsers1WithA4xx405SinceTheResource(): Promise<APIResponse> {
     return this.send("POST", "https://jsonplaceholder.typicode.com/users/1", {
+      headers: {"Accept":"application/json"},
+    });
+  }
+
+  /** DELETE https://jsonplaceholder.typicode.com/users */
+  async rejectDELETEAgainstTheUsersCollectionUsers(): Promise<APIResponse> {
+    return this.send("DELETE", "https://jsonplaceholder.typicode.com/users", {
       headers: {"Accept":"application/json"},
     });
   }
@@ -43,23 +50,9 @@ export class UsersApi extends BaseApi {
     });
   }
 
-  /** GET https://jsonplaceholder.typicode.com/users/10 */
-  async verifyGETUsers10Returns200ForTheHighestValid(): Promise<APIResponse> {
-    return this.send("GET", "https://jsonplaceholder.typicode.com/users/10", {
-      headers: {"Accept":"application/json"},
-    });
-  }
-
-  /** GET https://jsonplaceholder.typicode.com/users/0 */
-  async return404ForGETUsers0WhenTheIdIsBelowThe(): Promise<APIResponse> {
-    return this.send("GET", "https://jsonplaceholder.typicode.com/users/0", {
-      headers: {"Accept":"application/json"},
-    });
-  }
-
-  /** GET https://jsonplaceholder.typicode.com/users/-1 */
-  async rejectGETUsers1WithA4xx404WhenTheIdIs(): Promise<APIResponse> {
-    return this.send("GET", "https://jsonplaceholder.typicode.com/users/-1", {
+  /** GET https://jsonplaceholder.typicode.com/users/1/ */
+  async confirmGETUsers1WithATrailingSlashDoesNot(): Promise<APIResponse> {
+    return this.send("GET", "https://jsonplaceholder.typicode.com/users/1/", {
       headers: {"Accept":"application/json"},
     });
   }
