@@ -16,29 +16,37 @@ export class UsersApi extends BaseApi {
   }
 
   /** GET https://jsonplaceholder.typicode.com/users/99999999 */
-  async return404ForGETUsers99999999WhenTheRequested(): Promise<APIResponse> {
+  async return404ForGETUsers99999999WhenTheUserId(): Promise<APIResponse> {
     return this.send("GET", "https://jsonplaceholder.typicode.com/users/99999999", {
       headers: {"Accept":"application/json"},
     });
   }
 
   /** GET https://jsonplaceholder.typicode.com/users/abc */
-  async rejectGETUsersAbcWithA4xxWhenANonNumericIdIs(): Promise<APIResponse> {
+  async rejectGETUsersAbcWithANon2xxResponseWhenThe(): Promise<APIResponse> {
     return this.send("GET", "https://jsonplaceholder.typicode.com/users/abc", {
       headers: {"Accept":"application/json"},
     });
   }
 
-  /** POST https://jsonplaceholder.typicode.com/users/1 */
-  async rejectPOSTUsers1WithA4xx405SinceTheResource(): Promise<APIResponse> {
-    return this.send("POST", "https://jsonplaceholder.typicode.com/users/1", {
+  /** GET https://jsonplaceholder.typicode.com/users/0 */
+  async return404ForGETUsers0WhenTheIdIsTheReserved(): Promise<APIResponse> {
+    return this.send("GET", "https://jsonplaceholder.typicode.com/users/0", {
       headers: {"Accept":"application/json"},
     });
   }
 
-  /** DELETE https://jsonplaceholder.typicode.com/users */
-  async rejectDELETEAgainstTheUsersCollectionUsers(): Promise<APIResponse> {
-    return this.send("DELETE", "https://jsonplaceholder.typicode.com/users", {
+  /** POST https://jsonplaceholder.typicode.com/users/1 */
+  async rejectPOSTUsers1WithANon2xxResponseForAn(): Promise<APIResponse> {
+    return this.send("POST", "https://jsonplaceholder.typicode.com/users/1", {
+      headers: {"Accept":"application/json","Content-Type":"application/json"},
+      data: "{}",
+    });
+  }
+
+  /** DELETE https://jsonplaceholder.typicode.com/users/1 */
+  async rejectDELETEUsers1WithANon2xxResponseWhen(): Promise<APIResponse> {
+    return this.send("DELETE", "https://jsonplaceholder.typicode.com/users/1", {
       headers: {"Accept":"application/json"},
     });
   }
@@ -50,9 +58,9 @@ export class UsersApi extends BaseApi {
     });
   }
 
-  /** GET https://jsonplaceholder.typicode.com/users/1/ */
-  async confirmGETUsers1WithATrailingSlashDoesNot(): Promise<APIResponse> {
-    return this.send("GET", "https://jsonplaceholder.typicode.com/users/1/", {
+  /** GET https://jsonplaceholder.typicode.com/users/1%20OR%201=1 */
+  async confirmGETUsers1DoesNotReturnA5xxWhenAScript(): Promise<APIResponse> {
+    return this.send("GET", "https://jsonplaceholder.typicode.com/users/1%20OR%201=1", {
       headers: {"Accept":"application/json"},
     });
   }
