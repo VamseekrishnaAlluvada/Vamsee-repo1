@@ -16,37 +16,22 @@ export class UsersApi extends BaseApi {
   }
 
   /** GET https://jsonplaceholder.typicode.com/users/99999999 */
-  async return404ForGETUsers99999999WhenTheUserId(): Promise<APIResponse> {
+  async return404ForGETUsers99999999WhenTheRequested(): Promise<APIResponse> {
     return this.send("GET", "https://jsonplaceholder.typicode.com/users/99999999", {
       headers: {"Accept":"application/json"},
     });
   }
 
   /** GET https://jsonplaceholder.typicode.com/users/abc */
-  async rejectGETUsersAbcWithANon2xxResponseWhenThe(): Promise<APIResponse> {
+  async rejectGETUsersAbcWithA4xxWhenANonNumericIdIs(): Promise<APIResponse> {
     return this.send("GET", "https://jsonplaceholder.typicode.com/users/abc", {
       headers: {"Accept":"application/json"},
     });
   }
 
-  /** GET https://jsonplaceholder.typicode.com/users/0 */
-  async return404ForGETUsers0WhenTheIdIsTheReserved(): Promise<APIResponse> {
-    return this.send("GET", "https://jsonplaceholder.typicode.com/users/0", {
-      headers: {"Accept":"application/json"},
-    });
-  }
-
   /** POST https://jsonplaceholder.typicode.com/users/1 */
-  async rejectPOSTUsers1WithANon2xxResponseForAn(): Promise<APIResponse> {
+  async rejectPOSTUsers1WithA4xxWhenAnUnsupported(): Promise<APIResponse> {
     return this.send("POST", "https://jsonplaceholder.typicode.com/users/1", {
-      headers: {"Accept":"application/json","Content-Type":"application/json"},
-      data: "{}",
-    });
-  }
-
-  /** DELETE https://jsonplaceholder.typicode.com/users/1 */
-  async rejectDELETEUsers1WithANon2xxResponseWhen(): Promise<APIResponse> {
-    return this.send("DELETE", "https://jsonplaceholder.typicode.com/users/1", {
       headers: {"Accept":"application/json"},
     });
   }
@@ -58,9 +43,16 @@ export class UsersApi extends BaseApi {
     });
   }
 
-  /** GET https://jsonplaceholder.typicode.com/users/1%20OR%201=1 */
-  async confirmGETUsers1DoesNotReturnA5xxWhenAScript(): Promise<APIResponse> {
-    return this.send("GET", "https://jsonplaceholder.typicode.com/users/1%20OR%201=1", {
+  /** GET https://jsonplaceholder.typicode.com/users/1/ */
+  async confirmGETUsers1WithATrailingSlashDoesNot(): Promise<APIResponse> {
+    return this.send("GET", "https://jsonplaceholder.typicode.com/users/1/", {
+      headers: {"Accept":"application/json"},
+    });
+  }
+
+  /** GET https://jsonplaceholder.typicode.com/users/1'%20OR%20'1'='1 */
+  async verifyGETUsers1ReturnsAClean4xxForASQL(): Promise<APIResponse> {
+    return this.send("GET", "https://jsonplaceholder.typicode.com/users/1'%20OR%20'1'='1", {
       headers: {"Accept":"application/json"},
     });
   }
