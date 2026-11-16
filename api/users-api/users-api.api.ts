@@ -16,21 +16,21 @@ export class UsersApi extends BaseApi {
   }
 
   /** GET https://jsonplaceholder.typicode.com/users/99999999 */
-  async return404ForGETUsers99999999WhenTheRequested(): Promise<APIResponse> {
+  async return404ForGETUsers99999999WhenTheUserId(): Promise<APIResponse> {
     return this.send("GET", "https://jsonplaceholder.typicode.com/users/99999999", {
       headers: {"Accept":"application/json"},
     });
   }
 
   /** GET https://jsonplaceholder.typicode.com/users/abc */
-  async rejectGETUsersAbcWithA4xxWhenANonNumericIdIs(): Promise<APIResponse> {
+  async rejectGETUsersAbcWithANon2xxStatusWhenTheId(): Promise<APIResponse> {
     return this.send("GET", "https://jsonplaceholder.typicode.com/users/abc", {
       headers: {"Accept":"application/json"},
     });
   }
 
   /** POST https://jsonplaceholder.typicode.com/users/1 */
-  async rejectPOSTUsers1WithA4xxWhenAnUnsupported(): Promise<APIResponse> {
+  async rejectPOSTUsers1AgainstTheReadOnlyResource(): Promise<APIResponse> {
     return this.send("POST", "https://jsonplaceholder.typicode.com/users/1", {
       headers: {"Accept":"application/json"},
     });
@@ -43,6 +43,27 @@ export class UsersApi extends BaseApi {
     });
   }
 
+  /** GET https://jsonplaceholder.typicode.com/users/0 */
+  async return404ForGETUsers0WhenTheIdIsAtTheZero(): Promise<APIResponse> {
+    return this.send("GET", "https://jsonplaceholder.typicode.com/users/0", {
+      headers: {"Accept":"application/json"},
+    });
+  }
+
+  /** GET https://jsonplaceholder.typicode.com/users/-1 */
+  async rejectGETUsers1WithANon2xxStatusWhenTheIdIs(): Promise<APIResponse> {
+    return this.send("GET", "https://jsonplaceholder.typicode.com/users/-1", {
+      headers: {"Accept":"application/json"},
+    });
+  }
+
+  /** GET https://jsonplaceholder.typicode.com/users/99999999999 */
+  async return404ForGETUsers99999999999WhenTheIdIsA(): Promise<APIResponse> {
+    return this.send("GET", "https://jsonplaceholder.typicode.com/users/99999999999", {
+      headers: {"Accept":"application/json"},
+    });
+  }
+
   /** GET https://jsonplaceholder.typicode.com/users/1/ */
   async confirmGETUsers1WithATrailingSlashDoesNot(): Promise<APIResponse> {
     return this.send("GET", "https://jsonplaceholder.typicode.com/users/1/", {
@@ -50,9 +71,9 @@ export class UsersApi extends BaseApi {
     });
   }
 
-  /** GET https://jsonplaceholder.typicode.com/users/1'%20OR%20'1'='1 */
-  async verifyGETUsers1ReturnsAClean4xxForASQL(): Promise<APIResponse> {
-    return this.send("GET", "https://jsonplaceholder.typicode.com/users/1'%20OR%20'1'='1", {
+  /** GET https://jsonplaceholder.typicode.com/users/1%20OR%201%3D1 */
+  async confirmGETUsers1WithASQLInjectionShapedId(): Promise<APIResponse> {
+    return this.send("GET", "https://jsonplaceholder.typicode.com/users/1%20OR%201%3D1", {
       headers: {"Accept":"application/json"},
     });
   }
