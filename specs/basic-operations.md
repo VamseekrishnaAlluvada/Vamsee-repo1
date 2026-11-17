@@ -5,172 +5,189 @@ suite, grouped by module. Each numbered scenario maps to the correspondingly
 numbered test in `tests/<module>/<module>.spec.ts`.
 
 - **Total scenarios:** 13
-- **Modules:** API
+- **Modules:** Authentication
 
-## API
+## Authentication
 
-### 1. Verify GET /users/1 returns 200 with a JSON content-type and a non-empty user object
-**Feature:** Users API · **Priority:** P0 · **Type:** api
+### 1. Verify successful login with valid standard_user credentials
+**Feature:** Username/Password Login · **Priority:** P0 · **Type:** positive
 
-**Precondition:** The API endpoint https://jsonplaceholder.typicode.com/users/1 is reachable from the test environment.
-
-**Steps:**
-
-1. Send an HTTP GET request to https://jsonplaceholder.typicode.com/users/1. → Expected: The endpoint accepts the request and returns an HTTP response — status code, headers and body — that the assertions below validate.
-2. Assert that response status is 200. → Expected: The response status code is exactly 200.
-3. Assert that header "content-type" contains "application/json". → Expected: The "content-type" response header is present and contains "application/json".
-4. Assert that JSON "id" is present. → Expected: The JSON field "id" is present in the response body.
-
-**Expected Result:** All 3 assertions pass — response status is 200; header "content-type" contains "application/json"; JSON "id" is present.
-
-### 2. Confirm GET /users/1 returns id as a number matching the requested path id
-**Feature:** Users API · **Priority:** P0 · **Type:** data
-
-**Precondition:** The API endpoint https://jsonplaceholder.typicode.com/users/1 is reachable from the test environment.
+**Precondition:** The login page at https://www.saucedemo.com/ is reachable in staging. The account 'standard_user' with password 'secret_sauce' is active and not locked.
 
 **Steps:**
 
-1. Send an HTTP GET request to https://jsonplaceholder.typicode.com/users/1. → Expected: The endpoint accepts the request and returns an HTTP response — status code, headers and body — that the assertions below validate.
-2. Assert that response status is 200. → Expected: The response status code is exactly 200.
-3. Assert that JSON "id" is of type number. → Expected: The JSON field "id" is present and is of type number.
-4. Assert that JSON "id" equals 1. → Expected: The JSON field "id" is present and equals 1.
+1. Navigate to https://www.saucedemo.com/ → Expected: The login form is displayed with a 'Username' field, a 'Password' field, and a 'Login' button
+2. Enter 'standard_user' into the field with placeholder 'Username' → Expected: The Username field shows the value 'standard_user' and no validation error is displayed
+3. Enter 'secret_sauce' into the field with placeholder 'Password' → Expected: The Password field renders the input as masked dots and no validation error is displayed
+4. Click the 'Login' button → Expected: The visitor is authenticated and redirected to the inventory page at https://www.saucedemo.com/inventory.html
 
-**Expected Result:** All 3 assertions pass — response status is 200; JSON "id" is of type number; JSON "id" equals 1.
+**Expected Result:** The visitor is authenticated and taken into the application (inventory page). No error banner is shown.
 
-### 3. Confirm GET /users/1 responds within 5000 ms on the happy path
-**Feature:** Users API · **Priority:** P2 · **Type:** api
+### 2. Verify login fails with valid username and incorrect password
+**Feature:** Authentication Error Messaging · **Priority:** P0 · **Type:** negative
 
-**Precondition:** The API endpoint https://jsonplaceholder.typicode.com/users/1 is reachable from the test environment.
-
-**Steps:**
-
-1. Send an HTTP GET request to https://jsonplaceholder.typicode.com/users/1. → Expected: The endpoint accepts the request and returns an HTTP response — status code, headers and body — that the assertions below validate.
-2. Assert that response status is 200. → Expected: The response status code is exactly 200.
-3. Assert that response time is under 5000 ms. → Expected: The endpoint responds in under 5000 ms.
-
-**Expected Result:** All 2 assertions pass — response status is 200; response time is under 5000 ms.
-
-### 4. Verify GET /users/1 returns the documented application/json content-type header
-**Feature:** Users API · **Priority:** P1 · **Type:** data
-
-**Precondition:** The API endpoint https://jsonplaceholder.typicode.com/users/1 is reachable from the test environment.
+**Precondition:** The login page at https://www.saucedemo.com/ is reachable. The username 'standard_user' is a valid account.
 
 **Steps:**
 
-1. Send an HTTP GET request to https://jsonplaceholder.typicode.com/users/1. → Expected: The endpoint accepts the request and returns an HTTP response — status code, headers and body — that the assertions below validate.
-2. Assert that response is successful (2xx). → Expected: The response status code is in the 2xx success range.
-3. Assert that header "content-type" contains "json". → Expected: The "content-type" response header is present and contains "json".
+1. Navigate to https://www.saucedemo.com/ → Expected: The login form is displayed
+2. Enter 'standard_user' into the Username field → Expected: The Username field shows 'standard_user'
+3. Enter 'wrong_password_123' into the Password field → Expected: The Password field shows masked dots
+4. Click the 'Login' button → Expected: An error banner appears reading 'Epic sadface: Username and password do not match any user in this service' and the URL remains https://www.saucedemo.com/
 
-**Expected Result:** All 2 assertions pass — response is successful (2xx); header "content-type" contains "json".
+**Expected Result:** The visitor stays on the login page and sees the generic 'Username and password do not match' error.
 
-### 5. Return 404 for GET /users/99999999 when the user id does not exist
-**Feature:** Users API · **Priority:** P0 · **Type:** negative
+### 3. Verify login is blocked with a username-required error when both fields are empty
+**Feature:** Login Field Validation · **Priority:** P1 · **Type:** negative
 
-**Precondition:** The API endpoint https://jsonplaceholder.typicode.com/users/99999999 is reachable from the test environment.
-
-**Steps:**
-
-1. Send an HTTP GET request to https://jsonplaceholder.typicode.com/users/99999999. → Expected: The endpoint accepts the request and returns an HTTP response — status code, headers and body — that the assertions below validate.
-2. Assert that response status is 404. → Expected: The response status code is exactly 404.
-
-**Expected Result:** All 1 assertion pass — response status is 404.
-
-### 6. Reject GET /users/abc with a non-2xx status when the id is non-numeric
-**Feature:** Users API · **Priority:** P1 · **Type:** negative
-
-**Precondition:** The API endpoint https://jsonplaceholder.typicode.com/users/abc is reachable from the test environment.
+**Precondition:** The login page at https://www.saucedemo.com/ is reachable and both fields are empty.
 
 **Steps:**
 
-1. Send an HTTP GET request to https://jsonplaceholder.typicode.com/users/abc. → Expected: The endpoint accepts the request and returns an HTTP response — status code, headers and body — that the assertions below validate.
-2. Assert that response is an error (non-2xx). → Expected: The response status code is a non-2xx error, as this negative case expects.
+1. Navigate to https://www.saucedemo.com/ → Expected: The login form is displayed with empty Username and Password fields
+2. Leave both the Username and Password fields empty → Expected: Both fields remain empty
+3. Click the 'Login' button → Expected: An error banner appears reading 'Epic sadface: Username is required' and the visitor remains on https://www.saucedemo.com/
 
-**Expected Result:** All 1 assertion pass — response is an error (non-2xx).
+**Expected Result:** Submission is blocked and a required-field error for Username is displayed.
 
-### 7. Reject POST /users/1 against the read-only resource with a non-2xx status
-**Feature:** Users API · **Priority:** P2 · **Type:** negative
+### 4. Verify login is blocked with a password-required error when password is empty
+**Feature:** Login Field Validation · **Priority:** P1 · **Type:** negative
 
-**Precondition:** The API endpoint https://jsonplaceholder.typicode.com/users/1 is reachable from the test environment.
-
-**Steps:**
-
-1. Send an HTTP POST request to https://jsonplaceholder.typicode.com/users/1. → Expected: The endpoint accepts the request and returns an HTTP response — status code, headers and body — that the assertions below validate.
-2. Assert that response is an error (non-2xx). → Expected: The response status code is a non-2xx error, as this negative case expects.
-3. Assert that response status is under 500. → Expected: The response status code is below 500.
-
-**Expected Result:** All 2 assertions pass — response is an error (non-2xx); response status is under 500.
-
-### 8. Confirm GET /users/1 ignores an unknown query parameter and still returns 200
-**Feature:** Users API · **Priority:** P2 · **Type:** negative
-
-**Precondition:** The API endpoint https://jsonplaceholder.typicode.com/users/1?foo=bar is reachable from the test environment.
+**Precondition:** The login page at https://www.saucedemo.com/ is reachable.
 
 **Steps:**
 
-1. Send an HTTP GET request to https://jsonplaceholder.typicode.com/users/1?foo=bar. → Expected: The endpoint accepts the request and returns an HTTP response — status code, headers and body — that the assertions below validate.
-2. Assert that response status is 200. → Expected: The response status code is exactly 200.
-3. Assert that JSON "id" is present. → Expected: The JSON field "id" is present in the response body.
+1. Navigate to https://www.saucedemo.com/ → Expected: The login form is displayed
+2. Enter 'standard_user' into the Username field → Expected: The Username field shows 'standard_user'
+3. Leave the Password field empty → Expected: The Password field remains empty
+4. Click the 'Login' button → Expected: An error banner appears reading 'Epic sadface: Password is required' and the visitor remains on https://www.saucedemo.com/
 
-**Expected Result:** All 2 assertions pass — response status is 200; JSON "id" is present.
+**Expected Result:** Submission is blocked and a password-required error is displayed.
 
-### 9. Return 404 for GET /users/0 when the id is at the zero boundary
-**Feature:** Users API · **Priority:** P1 · **Type:** edge
+### 5. Verify non-existent username yields the same error as a wrong password (no enumeration)
+**Feature:** Authentication Error Messaging · **Priority:** P1 · **Type:** security
 
-**Precondition:** The API endpoint https://jsonplaceholder.typicode.com/users/0 is reachable from the test environment.
-
-**Steps:**
-
-1. Send an HTTP GET request to https://jsonplaceholder.typicode.com/users/0. → Expected: The endpoint accepts the request and returns an HTTP response — status code, headers and body — that the assertions below validate.
-2. Assert that response status is 404. → Expected: The response status code is exactly 404.
-
-**Expected Result:** All 1 assertion pass — response status is 404.
-
-### 10. Reject GET /users/-1 with a non-2xx status when the id is negative
-**Feature:** Users API · **Priority:** P1 · **Type:** edge
-
-**Precondition:** The API endpoint https://jsonplaceholder.typicode.com/users/-1 is reachable from the test environment.
+**Precondition:** The login page at https://www.saucedemo.com/ is reachable. The username 'nonexistent_user_zzz' does not exist in the system.
 
 **Steps:**
 
-1. Send an HTTP GET request to https://jsonplaceholder.typicode.com/users/-1. → Expected: The endpoint accepts the request and returns an HTTP response — status code, headers and body — that the assertions below validate.
-2. Assert that response is an error (non-2xx). → Expected: The response status code is a non-2xx error, as this negative case expects.
-3. Assert that response status is under 500. → Expected: The response status code is below 500.
+1. Navigate to https://www.saucedemo.com/ → Expected: The login form is displayed
+2. Enter 'nonexistent_user_zzz' into the Username field → Expected: The Username field shows 'nonexistent_user_zzz'
+3. Enter 'secret_sauce' into the Password field → Expected: The Password field shows masked dots
+4. Click the 'Login' button → Expected: An error banner appears reading 'Epic sadface: Username and password do not match any user in this service'
+5. Compare this error text to the wrong-password error from REQ-LOGIN-02 → Expected: The error message text is identical in wording, so the response does not reveal whether the username exists
 
-**Expected Result:** All 2 assertions pass — response is an error (non-2xx); response status is under 500.
+**Expected Result:** The error for a non-existent username is indistinguishable from the wrong-password error, preventing user enumeration.
 
-### 11. Return 404 for GET /users/99999999999 when the id is a huge out-of-range value
-**Feature:** Users API · **Priority:** P1 · **Type:** edge
+### 6. Verify locked-out user receives a distinct lockout-specific error
+**Feature:** Authentication Error Messaging · **Priority:** P1 · **Type:** negative
 
-**Precondition:** The API endpoint https://jsonplaceholder.typicode.com/users/99999999999 is reachable from the test environment.
-
-**Steps:**
-
-1. Send an HTTP GET request to https://jsonplaceholder.typicode.com/users/99999999999. → Expected: The endpoint accepts the request and returns an HTTP response — status code, headers and body — that the assertions below validate.
-2. Assert that response status is 404. → Expected: The response status code is exactly 404.
-
-**Expected Result:** All 1 assertion pass — response status is 404.
-
-### 12. Confirm GET /users/1/ with a trailing slash does not return a 5xx
-**Feature:** Users API · **Priority:** P2 · **Type:** edge
-
-**Precondition:** The API endpoint https://jsonplaceholder.typicode.com/users/1/ is reachable from the test environment.
+**Precondition:** The login page at https://www.saucedemo.com/ is reachable. The account 'locked_out_user' exists and is in a locked state with password 'secret_sauce'.
 
 **Steps:**
 
-1. Send an HTTP GET request to https://jsonplaceholder.typicode.com/users/1/. → Expected: The endpoint accepts the request and returns an HTTP response — status code, headers and body — that the assertions below validate.
-2. Assert that response status is under 500. → Expected: The response status code is below 500.
+1. Navigate to https://www.saucedemo.com/ → Expected: The login form is displayed
+2. Enter 'locked_out_user' into the Username field → Expected: The Username field shows 'locked_out_user'
+3. Enter 'secret_sauce' into the Password field → Expected: The Password field shows masked dots
+4. Click the 'Login' button → Expected: An error banner appears reading 'Epic sadface: Sorry, this user has been locked out.' and the visitor remains on https://www.saucedemo.com/
 
-**Expected Result:** All 1 assertion pass — response status is under 500.
+**Expected Result:** A distinct lockout-specific error is shown and the user is not authenticated.
 
-### 13. Confirm GET /users/1 with a SQL-injection-shaped id returns a clean non-2xx without echoing the payload
-**Feature:** Users API · **Priority:** P2 · **Type:** edge
+### 7. Verify a visitor can recover from a wrong-password failure and log in on retry
+**Feature:** Username/Password Login · **Priority:** P1 · **Type:** e2e
 
-**Precondition:** The API endpoint https://jsonplaceholder.typicode.com/users/1%20OR%201%3D1 is reachable from the test environment.
+**Precondition:** The login page at https://www.saucedemo.com/ is reachable. The account 'standard_user' is active with password 'secret_sauce'.
 
 **Steps:**
 
-1. Send an HTTP GET request to https://jsonplaceholder.typicode.com/users/1%20OR%201%3D1. → Expected: The endpoint accepts the request and returns an HTTP response — status code, headers and body — that the assertions below validate.
-2. Assert that response is an error (non-2xx). → Expected: The response status code is a non-2xx error, as this negative case expects.
-3. Assert that response status is under 500. → Expected: The response status code is below 500.
+1. Navigate to https://www.saucedemo.com/ → Expected: The login form is displayed
+2. Enter 'standard_user' into the Username field and 'wrong_password_123' into the Password field, then click 'Login' → Expected: An error banner 'Epic sadface: Username and password do not match any user in this service' is displayed
+3. Clear the Password field and enter 'secret_sauce' → Expected: The Password field shows masked dots for the corrected value
+4. Click the 'Login' button → Expected: The visitor is authenticated and redirected to https://www.saucedemo.com/inventory.html
+5. Observe the inventory page for any residual error banner → Expected: No stale error message from the earlier failed attempt is present
 
-**Expected Result:** All 2 assertions pass — response is an error (non-2xx); response status is under 500.
+**Expected Result:** The visitor logs in successfully on retry and no stale error persists after authentication.
+
+### 8. Verify password input is masked and never exposed in the page DOM or source
+**Feature:** Login Submission Control · **Priority:** P1 · **Type:** security
+
+**Precondition:** The login page at https://www.saucedemo.com/ is reachable.
+
+**Steps:**
+
+1. Navigate to https://www.saucedemo.com/ → Expected: The login form is displayed
+2. Enter 'secret_sauce' into the Password field → Expected: The field renders masked dots rather than the plaintext characters
+3. Inspect the Password input element in the DOM → Expected: The input has type='password', confirming native masking
+4. View the visible page output and search for the literal string 'secret_sauce' → Expected: The plaintext password is not present in any visible text node of the page
+
+**Expected Result:** The password is masked on screen and its plaintext value is not exposed in the visible page output.
+
+### 9. Verify login submits exactly one authentication request over HTTPS without credentials in the URL
+**Feature:** Login Submission Control · **Priority:** P0 · **Type:** security
+
+**Precondition:** The login page at https://www.saucedemo.com/ is reachable. Browser developer tools network capture is enabled.
+
+**Steps:**
+
+1. Navigate to https://www.saucedemo.com/ and open the browser network panel → Expected: The login form is displayed and the network panel is recording requests
+2. Enter 'standard_user' and 'secret_sauce' into the Username and Password fields → Expected: Both fields show their values (password masked)
+3. Click the 'Login' button and observe the captured network traffic → Expected: Exactly one authentication request is issued; no duplicate request is sent
+4. Inspect the authentication request's scheme and URL → Expected: The request is transmitted over https:// and the password value 'secret_sauce' does not appear in any URL query string
+
+**Expected Result:** A single authentication request is sent over HTTPS with no credentials exposed in the URL.
+
+### 10. Verify pressing Enter in the password field submits the login identically to clicking Login
+**Feature:** Login Submission Control · **Priority:** P2 · **Type:** edge
+
+**Precondition:** The login page at https://www.saucedemo.com/ is reachable. The account 'standard_user' is active with password 'secret_sauce'.
+
+**Steps:**
+
+1. Navigate to https://www.saucedemo.com/ → Expected: The login form is displayed
+2. Enter 'standard_user' into the Username field and 'secret_sauce' into the Password field → Expected: Both fields show their values (password masked)
+3. With focus in the Password field, press the Enter key → Expected: The form submits without clicking the Login button
+4. Observe the resulting page → Expected: The visitor is authenticated and redirected to https://www.saucedemo.com/inventory.html, identical to a Login button click
+
+**Expected Result:** Enter-key submission authenticates the visitor identically to clicking the Login button.
+
+### 11. Verify SQL and script injection payloads in login fields are safely rejected
+**Feature:** Login Field Validation · **Priority:** P1 · **Type:** security
+
+**Precondition:** The login page at https://www.saucedemo.com/ is reachable.
+
+**Steps:**
+
+1. Navigate to https://www.saucedemo.com/ → Expected: The login form is displayed
+2. Enter the string ' OR '1'='1 into the Username field → Expected: The field accepts the literal text with no script execution
+3. Enter the string <script>alert('xss')</script> into the Password field → Expected: The field accepts the literal text as masked input with no alert dialog triggered
+4. Click the 'Login' button → Expected: Authentication is denied with the standard error banner; no SQL error, no stack trace, and no JavaScript alert appears
+
+**Expected Result:** Injection payloads are rejected safely with a standard credentials error and no bypass or script execution.
+
+### 12. Verify username is case-sensitive and rejects an altered-case value
+**Feature:** Login Field Validation · **Priority:** P2 · **Type:** edge
+
+**Precondition:** The login page at https://www.saucedemo.com/ is reachable. The valid account is exactly 'standard_user' (lowercase).
+
+**Steps:**
+
+1. Navigate to https://www.saucedemo.com/ → Expected: The login form is displayed
+2. Enter 'Standard_User' into the Username field → Expected: The Username field shows 'Standard_User'
+3. Enter 'secret_sauce' into the Password field → Expected: The Password field shows masked dots
+4. Click the 'Login' button → Expected: Authentication fails with 'Epic sadface: Username and password do not match any user in this service' and the visitor remains on the login page
+
+**Expected Result:** The altered-case username is rejected, confirming case-sensitive username matching.
+
+### 13. Verify repeated failed login attempts do not lock or throttle the account (characterization)
+**Feature:** Login Submission Control · **Priority:** P2 · **Type:** security
+
+**Precondition:** The login page at https://www.saucedemo.com/ is reachable. The account 'standard_user' exists with password 'secret_sauce'.
+
+**Steps:**
+
+1. Navigate to https://www.saucedemo.com/ → Expected: The login form is displayed
+2. Enter 'standard_user' with an incorrect password and click 'Login', repeating this 10 times in succession → Expected: Each attempt returns the standard bad-credentials error banner
+3. Observe whether any attempt is blocked, delayed, or returns a lockout/throttle message → Expected: Record whether the system throttles, locks out, or continues accepting attempts
+4. On the 11th attempt, enter 'standard_user' with the correct password 'secret_sauce' and click 'Login' → Expected: Document the result; if no lockout is implemented, the correct credentials authenticate successfully and this behavior is recorded as absent-by-design
+
+**Expected Result:** The throttling/lockout behavior is characterized and documented, either as enforced or explicitly absent-by-design.
